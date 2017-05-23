@@ -83,8 +83,6 @@ app.get "/imgsrch/latest", (req, res) ->
 app.get "/filedata", (req, res) -> res.render "filesize.pug"
 
 app.post "/filedata", upload.single('file'), (req, res) ->
-  console.log req.file
-  console.log req.body
   res.json size: req.file.size
 
 

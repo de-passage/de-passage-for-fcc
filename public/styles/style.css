@@ -1,0 +1,45 @@
+body {
+  position: absolute;
+  width: 60%;
+  left: 20%; }
+
+code {
+  background: #EEE;
+  color: purple;
+  padding: 8px;
+  border-radius: 7px; }
+  code a {
+    text-decoration: none;
+    color: purple; }
+
+.code-block {
+  margin-top: 15px;
+  margin-bottom: 15px; }
+
+.alert {
+  border-radius: 7px;
+  padding: 10px;
+  text-align: center; }
+
+.error {
+  color: red;
+  border: 1px red solid; }
+
+.info {
+  border-radius: 7px;
+  color: blue;
+  border: 1px blue solid; }
+
+h2, h3 {
+  margin-top: 2em; }
+
+@media only screen and (max-width: 750px) {
+  body {
+    width: 80%;
+    left: 10%; } }
+@media only screen and (max-width: 500px) {
+  body {
+    width: 100%;
+    left: 0; } }
+
+/*# sourceMappingURL=style.css.map */

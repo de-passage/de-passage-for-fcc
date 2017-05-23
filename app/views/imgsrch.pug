@@ -1,0 +1,33 @@
+doctype html
+head
+  title Image Search Abstraction Layer
+  meta(name="viewport", content="width=device-width, initial-scale=1.0")
+  link(href="/styles/style.css", rel="stylesheet", type="text/css")
+
+body
+  h1 Image Search Abstraction Layer
+  h2 Endpoint
+  .code-block
+    code
+      script document.write(window.location.hostname);
+      | /imgsrch
+  h2 Actions
+  .code-block
+    code /search/{{search}}
+  p Search for images. Optional query parameter <code>offset</code>
+  br
+  .code-block
+    code /latest
+  p Returns the 10 latest searches.
+  h3 Example:
+  .code-block
+    code
+      a(href="/imgsrch/search/lolcat?offset=2", target="_blank")
+        script document.write(window.location.hostname);
+        | /imgsrch/search/lolcat?offset=2
+  .code-block
+    code
+      a(href="/imgsrch/latest", target="_blank")
+        script document.write(window.location.hostname);
+        | /imgsrch/latest
+

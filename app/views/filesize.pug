@@ -1,0 +1,21 @@
+doctype html
+head
+  title File Metadata
+  meta(name="viewport", content="width=device-width, initial-scale=1.0")
+  link(href="/styles/style.css", rel="stylesheet", type="text/css")
+
+body
+  h1 File Metadata
+  h2 Endpoint
+  .code-block
+    code
+      | POST
+      |
+      script document.write(window.location.hostname);
+      | /filedata
+  p Post a file to receive a JSON containing its size in bits.
+  h2 Try it!
+  form(method="post", action="/filedata", enctype="multipart/form-data")
+    input(type="file", name="file")
+    input(type="submit", text="Upload")
+

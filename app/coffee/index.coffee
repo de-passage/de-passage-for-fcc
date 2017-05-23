@@ -8,11 +8,13 @@ mongo = require('mongodb').MongoClient
 body_parser = require('body-parser')
 https = require('https')
 util = require 'util'
+multer = require 'multer'
 
 # ##############
 # Declarations #
 # ##############
 
+upload = multer()
 app = express()
 port = process.env.PORT
 user = process.env.DB_USER
@@ -77,6 +79,13 @@ app.get "/imgsrch/latest", (req, res) ->
     throw err if err
     queryResult = ( search: r.search, date: r.date, dateStr: (new Date(r.date)).toString() for r in result )
     res.json queryResult
+
+app.get "/filedata", (req, res) -> res.render "filesize.pug"
+
+app.post "/filedata", upload.single('file'), (req, res) ->
+  console.log req.file
+  console.log req.body
+  res.json size: req.file.size
 
 
 mongo.connect db_url, (err, database) ->

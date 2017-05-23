@@ -1,0 +1,26 @@
+{
+  "name": "de-passage-for-fcc",
+  "version": "1.0.0",
+  "description": "Various projects for FreeCodeCamp in one",
+  "main": "app/js/index.js",
+  "scripts": {
+    "start": "node app/js/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/de-passage/de-passage-for-fcc.git"
+  },
+  "author": "Sylvain Leclercq",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/de-passage/de-passage-for-fcc/issues"
+  },
+  "homepage": "https://github.com/de-passage/de-passage-for-fcc#readme",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "mongodb": "^2.2.27",
+    "pug": "^2.0.0-rc.1"
+  }
+}

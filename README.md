@@ -2,8 +2,8 @@
 
 Various projects made for the completion of the FreeCodeCamp curriculum
 
-##Content
+## Content
 
-###Image Search Abstraction Layer
+### Image Search Abstraction Layer
 
 Simple API to search images on the web

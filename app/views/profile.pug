@@ -1,0 +1,12 @@
+extends layout.pug
+
+block title
+  | Profile of #{user.name}
+
+block content
+  p= user.email
+  - if(user.votes) {
+  p= user.votes
+  
+  - }
+  

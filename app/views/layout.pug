@@ -1,0 +1,20 @@
+doctype html
+head
+  title 
+    block title
+  meta(name="viewport", content="width=device-width, initial-scale=1.0")
+body
+  nav
+    - if(user) {
+    span #{user.name}
+    span &lt;#{user.email}&gt;
+    a(href="/logout") Log out
+    - }
+  h1
+    block title
+
+  - if(message) {
+  p= message
+  - }
+
+  block content

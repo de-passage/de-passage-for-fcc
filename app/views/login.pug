@@ -1,10 +1,11 @@
-doctype html
-head
-  title Log in
-  meta(name="viewport", content="width=device-width, initial-scale=1.0")
-body
+extends layout.pug
+
+block title 
+  | Log in!
+
+block content
   form(action="/login", method="post")
-    input(type="text", name="username", placeholder="Username")
+    input(type="email", name="email", placeholder="Email address")
     input(type="password", name="password", placeholder="Password")
     input(type="Submit", text="Log in" )
 

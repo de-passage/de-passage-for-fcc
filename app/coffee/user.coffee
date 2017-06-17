@@ -1,4 +1,5 @@
 bcrypt = require "bcrypt-nodejs"
+ObjectId = require("mongodb").ObjectId
 
 instanciateUser = (db) ->
 
@@ -17,7 +18,7 @@ instanciateUser = (db) ->
 
     save: (callback) ->
       db.save {
-          _id: @id
+          _id: if @id then ObjectId(@id) else undefined
           username: @name
           email: @email
           vote: @votes

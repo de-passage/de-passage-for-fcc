@@ -13,9 +13,10 @@
   db_connection = require("./config/db.js");
 
   db_connection(function(db) {
-    var authentication, imgsrch;
+    var authentication, imgsrch, voting;
     authentication = (require("./authentication.js"))(db);
     imgsrch = (require("./imgsrch/main.js"))(db);
+    voting = (require("./voting-app/poll_controller.js"))(db);
     app.get("/", function(req, res) {
       return res.render("index.pug");
     });
@@ -32,6 +33,13 @@
         size: req.file.size
       });
     });
+    app.get("/voting-app/polls", voting.index);
+    app.get("/voting-app/poll/:name", voting.show);
+    app.get("/voting-app/poll/:name/edit", voting.edit);
+    app.put("voting-app/poll/:name", voting.update);
+    app.get("/voting-app/polls/new", voting["new"]);
+    app.post("/voting-app/poll", voting.create);
+    app["delete"]("/voting-app/poll/:name", voting.destroy);
     app.get("/login", function(req, res) {
       req.user;
       return res.render("login.pug", {

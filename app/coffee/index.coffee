@@ -10,6 +10,7 @@ db_connection (db) ->
 
   authentication = (require "./authentication.js") db
   imgsrch = (require "./imgsrch/main.js") db
+  voting = (require "./voting-app/poll_controller.js") db
 
   # ########
   # Routes #
@@ -30,6 +31,15 @@ db_connection (db) ->
   app.post "/filedata", upload.single('file'), (req, res) ->
     res.json size: req.file.size
   
+  # Voting app
+  app.get "/voting-app/polls", voting.index
+  app.get "/voting-app/poll/:name", voting.show
+  app.get "/voting-app/poll/:name/edit", voting.edit
+  app.put "voting-app/poll/:name", voting.update
+  app.get "/voting-app/polls/new", voting.new
+  app.post "/voting-app/poll", voting.create
+  app.delete "/voting-app/poll/:name", voting.destroy
+
   # Authentication
   app.get "/login", (req, res) -> req.user; res.render "login.pug", message: req.flash("loginMessage"), user: req.user
   app.post "/login", authentication.login
@@ -38,6 +48,8 @@ db_connection (db) ->
   app.post "/signup", authentication.signup
   
   app.get "/logout", authentication.logout
+
+  # User profile
   app.get "/profile", authentication.isAuthenticated, (req, res) -> res.render "profile.pug", user: req.user
 
 

@@ -6,14 +6,15 @@ class MockDB
     @ids = 0
     @count = 0
 
-  save: (id, obj, callback) ->
+  save: (obj, callback) ->
+    id = obj.id
     unless id?
       id = @ids
       @ids++
     unless @[id]?
       @count++
     @[id] = obj
-    callback(null, id)
+    callback(null, {_id: id})
 
   delete: (id) ->
     if @[id]?
@@ -22,7 +23,7 @@ class MockDB
 
 Poll = null
 
-describe "Poll", ->
+describe "Polls", ->
 
   db = null
 
@@ -35,48 +36,44 @@ describe "Poll", ->
 #    (typeof poll.db).should.not.equal "undefined"
     poll.user.should.equal "user"
     poll.name.should.equal "sample name"
-    poll.options.should.be.an "array"
-    poll.options.length.should.equal 0
+    poll.options.should.be.an "object"
+    poll.optionCount().should.equal 0
     poll.description.should.equal ""
 
-  it "should be possible to construct a poll with one option", ->
+  it "should be constructible with one option", ->
     poll = new Poll "", "", "", {description: "option1"}
-    poll.options.length.should.equal 1
-    poll.options[0].description.should.equal "option1"
+    poll.optionCount().should.equal 1
+    poll.options["option1"].count.should.equal 0
 
-  it "should be possible to construct a poll with several options", ->
+  it "should be constructible with several options", ->
     poll = new Poll "", "", "", [ {description: "option1"}, {description: "option2", count: 3}, {description: "option3"} ]
-    poll.options.length.should.equal 3
-    poll.options[0].description.should.equal "option1"
-    poll.options[0].count.should.equal 0
-    poll.options[1].description.should.equal "option2"
-    poll.options[1].count.should.equal 3
-    poll.options[2].description.should.equal "option3"
-    poll.options[2].count.should.equal 0
+    poll.optionCount().should.equal 3
+    poll.options["option1"].count.should.equal 0
+    poll.options["option2"].count.should.equal 3
+    poll.options["option3"].count.should.equal 0
 
-  it "should be possible to add options to a poll", ->
+  it "should add new options through the addOption() method", ->
     poll = new Poll "", ""
     poll.addOption { description: "option1" }
-    poll.options.length.should.equal 1
+    poll.optionCount().should.equal 1
     poll.addOption { description: "option2", count: 42 }
-    poll.options.length.should.equal 2
-    poll.options[0].description.should.equal "option1"
-    poll.options[0].count.should.equal 0
-    poll.options[1].description.should.equal "option2"
-    poll.options[1].count.should.equal 42
+    poll.optionCount().should.equal 2
+    poll.options["option1"].count.should.equal 0
+    poll.options["option2"].count.should.equal 42
 
-  it "should be possible to remove options from a poll", ->
+  it "should remove options through the removeOption() method", ->
     poll = new Poll "", "", "", [ {description: "option1"}, {description: "option2"}, {description: "option3"} ]
     poll.removeOption "option2"
-    poll.options.length.should.equal 2
-    poll.options[0].description.should.equal "option1"
-    poll.options[1].description.should.equal "option3"
+    poll.optionCount().should.equal 2
+    poll.options["option1"].count.should.equal 0
+    poll.options["option3"].count.should.equal 0
+    (typeof poll.options["option2"]).should.equal "undefined"
 
-  it "should be possible to save the current poll and retrieve the assigned id", ->
+  it "should be saved to the database through the save() method", ->
     poll = new Poll "user", "name", "description", [{description: "option1"}, {description: "option2"}]
     (typeof poll.id).should.equal "undefined"
-    poll.save()
-    db.count.should.equal 1
-    (typeof db[0]).should.not.equal "undefined"
-    poll.id.should.equal 0
+    poll.save (err, poll) ->
+      db.count.should.equal 1
+      (typeof db[0]).should.not.equal "undefined"
+      poll.id.should.equal 0
 

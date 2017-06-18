@@ -34,25 +34,26 @@ instanciatePoll = (db) ->
         options: @options
         voters: @voters
       }, (err, obj) =>
-        return callback err if err
         @id = obj._id
-        callback null, @
+        if callback?
+          return callback err if err
+          callback null, @
         
 
 
     # Add a new option to the poll
-    addOption: (name, user) ->
-      option =
+    addOption: (option, user) ->
+      name = option.description.trim()
+      throw "An option with the name '#{name}' already exists" if @options[name]
+      newOption =
         user: user
-        count: 0
-      option.description = option.description.trim()
-      throw "An option with the name '#{name}' already exists" if options[name]
-      @options[name] option
+        count: option.count || 0
+      @options[name] = newOption
 
 
     # Remove the option with the description from the poll
     removeOption: (option) ->
-      @options = @options.filter (e) -> e.description != option
+      delete @options[option]
 
     # Register a user's vote for an option
     vote: (option, username) ->
@@ -62,6 +63,8 @@ instanciatePoll = (db) ->
       @options[option].count++
       @voter[username] = option
       
+    optionCount: ->
+      Object.keys(@options).length
 
       
     # Remove the poll from the database

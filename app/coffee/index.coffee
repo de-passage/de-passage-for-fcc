@@ -10,7 +10,7 @@ db_connection (db) ->
 
   authentication = (require "./authentication.js") db
   imgsrch = (require "./imgsrch/main.js") db
-  Poll = require("./poll.js") db.collection "polls"
+  Poll = require("./poll.js") db.collection("polls"), require("mongodb").ObjectId
   voting = (require "./voting-app/poll_controller.js") db
 
   # ########

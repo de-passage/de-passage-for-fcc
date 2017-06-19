@@ -1,6 +1,6 @@
-ObjectId = require("mongodb").ObjectId
+#ObjectId = require("mongodb").ObjectId
 
-instanciatePoll = (db) ->
+instanciatePoll = (db, ObjectId) ->
 # #####################
 # Model for the polls #
 # #####################
@@ -26,14 +26,7 @@ instanciatePoll = (db) ->
 
     # Save the current state of the poll in the database
     save: (callback) ->
-      db.save {
-        _id: if @id then ObjectId(@id) else undefined
-        owner: @user
-        name: @name
-        description: @description
-        options: @options
-        voters: @voters
-      }, (err, obj) =>
+      db.save @serialize(), (err, obj) =>
         @id = obj._id
         if callback?
           return callback err if err
@@ -70,14 +63,24 @@ instanciatePoll = (db) ->
     # Remove the poll from the database
     delete: ->
       throw "This poll is not registered in the database" unless @id?
-      db.delete @id
+      db.remove @id
 
     @deserialize: (obj) ->
       poll = new Poll obj.owner, obj.name, obj.description
-      poll.id = obj._id if obj._id
+      poll.id = obj._id if obj._id?
       poll.options = obj.options if obj.options?
       poll.voters = obj.voters if obj.voters?
       poll
+
+    serialize: () ->
+      obj =
+        owner: @user
+        name: @name
+        description: @description
+        options: @options
+        voters: @voters
+      obj._id = ObjectId(@id) if @id?
+      obj
 
     @findOne: (search, callback) ->
       db.findOne search, (err, poll) =>

@@ -60,7 +60,11 @@ describe "Poll controller", ->
 
   it "should add a poll to the database on create"
 
-  it "should redirect to the individual show page after create"
+  it "should redirect to the individual show page after create", ->
+    req = {}
+    pollController.create(req, res)
+
+    sinon.assert.calledOnce(res.redirect)
 
   it "should change a poll in the database on update"
 

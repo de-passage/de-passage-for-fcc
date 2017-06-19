@@ -8,7 +8,7 @@ instanciateUser = (db) ->
   # #########################
 
   class User
-    constructor: (@name, @email, @votes, @password) ->
+    constructor: (@name, @email, @password) ->
 
     verifyPassword: (password) ->
       bcrypt.compareSync(password, @password)
@@ -21,19 +21,19 @@ instanciateUser = (db) ->
           _id: if @id then ObjectId(@id) else undefined
           username: @name
           email: @email
-          vote: @votes
+          #vote: @votes
           password: @password
         }, (err, obj) =>
-          return callback err if err
+          return callback? err if err
           @id = obj._id
-          callback null, @
+          callback? null, @
 
     @findOne = (params, callback) ->
       db.findOne params, (err, result) ->
         callback err if err
         user = false
         if result?
-          user = new User(result.username, result.email, result.votes, result.password)
+          user = new User(result.username, result.email, result.password)
           user.id = result._id
         callback null, user
 

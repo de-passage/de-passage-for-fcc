@@ -6,7 +6,8 @@ assert = chai.assert
 
 sinon = require "sinon"
 
-database = require "./helpers/db.coffee"
+MockCollection = require "./helpers/db.coffee"
+database = new MockCollection [ { name: "user1" } ]
 User = userClass database
 db = sinon.mock database
 

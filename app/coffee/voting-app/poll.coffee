@@ -72,20 +72,27 @@ instanciatePoll = (db) ->
       throw "This poll is not registered in the database" unless @id?
       db.delete @id
 
+    @deserialize: (obj) ->
+      poll = new Poll obj.owner, obj.name, obj.description
+      poll.id = obj._id if obj._id
+      poll.options = obj.options if obj.options?
+      poll.voters = obj.voters if obj.voters?
+      poll
+
     @findOne: (search, callback) ->
-      db.findOne search, (err, poll) ->
+      db.findOne search, (err, poll) =>
         callback err if err
         result = false
         if poll
-          result = new Poll poll.owner, poll.name, poll.description
-          result.id = poll._id
-          result.options = poll.options
-          result.voters = poll.voters
+          result = @deserialize poll
         callback null, result
 
-        
-
-
-
+    @all: (limit, callback) ->
+      cursor = db.find()
+      if typeof limit is "function"
+        callback = limit
+      else
+        cursor = cursor.limit(limit)
+      cursor.toArray (arr) => callback null, arr.map @deserialize
 
 module.exports = instanciatePoll

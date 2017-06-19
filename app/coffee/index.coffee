@@ -10,6 +10,7 @@ db_connection (db) ->
 
   authentication = (require "./authentication.js") db
   imgsrch = (require "./imgsrch/main.js") db
+  Poll = require("./poll.js") db.collection "polls"
   voting = (require "./voting-app/poll_controller.js") db
 
   # ########

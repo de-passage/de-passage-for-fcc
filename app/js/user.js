@@ -9,10 +9,9 @@
   instanciateUser = function(db) {
     var User;
     return User = (function() {
-      function User(name, email, votes, password1) {
+      function User(name, email, password1) {
         this.name = name;
         this.email = email;
-        this.votes = votes;
         this.password = password1;
       }
 
@@ -29,15 +28,14 @@
           _id: this.id ? ObjectId(this.id) : void 0,
           username: this.name,
           email: this.email,
-          vote: this.votes,
           password: this.password
         }, (function(_this) {
           return function(err, obj) {
             if (err) {
-              return callback(err);
+              return typeof callback === "function" ? callback(err) : void 0;
             }
             _this.id = obj._id;
-            return callback(null, _this);
+            return typeof callback === "function" ? callback(null, _this) : void 0;
           };
         })(this));
       };
@@ -50,7 +48,7 @@
           }
           user = false;
           if (result != null) {
-            user = new User(result.username, result.email, result.votes, result.password);
+            user = new User(result.username, result.email, result.password);
             user.id = result._id;
           }
           return callback(null, user);

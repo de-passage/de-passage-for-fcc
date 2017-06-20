@@ -96,6 +96,9 @@ instanciatePoll = (db, ObjectId) ->
         callback = limit
       else
         cursor = cursor.limit(limit)
-      cursor.toArray (arr) => callback null, arr.map @deserialize
+      cursor.toArray (arr) => 
+        arr ||= []
+        callback null, arr.map @deserialize
 
 module.exports = instanciatePoll
+

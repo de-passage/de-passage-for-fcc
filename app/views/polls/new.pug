@@ -1,0 +1,14 @@
+extends ../layout.pug
+
+block title
+  | New poll
+
+block content
+  form(method="post", action="/voting-app/poll")
+    input(type="text", name="name", placeholder="Name")
+    textarea(name="description", placeholder="Optional description")
+    #option-input
+    input(type="submit", text="Save poll")
+
+
+    

@@ -1,0 +1,16 @@
+extends ../layout.pug
+
+block title
+  | #{poll.name}
+
+block content
+  p= poll.description
+    span A poll by #{poll.owner}
+  ul
+  - Object.keys(poll.options).forEach(function(option) {
+    li= option
+  - });
+	
+
+	
+

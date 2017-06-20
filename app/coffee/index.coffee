@@ -8,10 +8,10 @@ db_connection = require "./config/db.js"
 
 db_connection (db) ->
 
-  authentication = (require "./authentication.js") db
-  imgsrch = (require "./imgsrch/main.js") db
-  Poll = require("./poll.js") db.collection("polls"), require("mongodb").ObjectId
-  voting = (require "./voting-app/poll_controller.js") db
+  authentication = require("./authentication.js") db
+  imgsrch = require("./imgsrch/main.js") db
+  Poll = require("./voting-app/poll.js") db.collection("polls"), require("mongodb").ObjectId
+  voting = require("./voting-app/poll_controller.js")(Poll)
 
   # ########
   # Routes #
@@ -35,11 +35,11 @@ db_connection (db) ->
   # Voting app
   app.get "/voting-app/polls", voting.index
   app.get "/voting-app/poll/:name", voting.show
-  app.get "/voting-app/poll/:name/edit", voting.edit
-  app.put "voting-app/poll/:name", voting.update
-  app.get "/voting-app/polls/new", voting.new
-  app.post "/voting-app/poll", voting.create
-  app.delete "/voting-app/poll/:name", voting.destroy
+  app.get "/voting-app/poll/:name/edit", authentication.isAuthenticated, voting.edit
+  app.put "voting-app/poll/:name", authentication.isAuthenticated,  voting.update
+  app.get "/voting-app/polls/new", authentication.isAuthenticated,  voting.new
+  app.post "/voting-app/poll", authentication.isAuthenticated,  voting.create
+  app.delete "/voting-app/poll/:name", authentication.isAuthenticated,  voting.destroy
 
   # Authentication
   app.get "/login", (req, res) -> req.user; res.render "login.pug", message: req.flash("loginMessage"), user: req.user

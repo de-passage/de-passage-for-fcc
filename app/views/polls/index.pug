@@ -1,0 +1,9 @@
+extends ../layout.pug
+
+block title
+  | Polls
+
+block content
+  - polls.forEach(function(poll) {
+  p= poll
+  - });

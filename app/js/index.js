@@ -13,10 +13,11 @@
   db_connection = require("./config/db.js");
 
   db_connection(function(db) {
-    var authentication, imgsrch, voting;
-    authentication = (require("./authentication.js"))(db);
-    imgsrch = (require("./imgsrch/main.js"))(db);
-    voting = (require("./voting-app/poll_controller.js"))(db);
+    var Poll, authentication, imgsrch, voting;
+    authentication = require("./authentication.js")(db);
+    imgsrch = require("./imgsrch/main.js")(db);
+    Poll = require("./voting-app/poll.js")(db.collection("polls"), require("mongodb").ObjectId);
+    voting = require("./voting-app/poll_controller.js")(Poll);
     app.get("/", function(req, res) {
       return res.render("index.pug");
     });
@@ -35,11 +36,11 @@
     });
     app.get("/voting-app/polls", voting.index);
     app.get("/voting-app/poll/:name", voting.show);
-    app.get("/voting-app/poll/:name/edit", voting.edit);
-    app.put("voting-app/poll/:name", voting.update);
-    app.get("/voting-app/polls/new", voting["new"]);
-    app.post("/voting-app/poll", voting.create);
-    app["delete"]("/voting-app/poll/:name", voting.destroy);
+    app.get("/voting-app/poll/:name/edit", authentication.isAuthenticated, voting.edit);
+    app.put("voting-app/poll/:name", authentication.isAuthenticated, voting.update);
+    app.get("/voting-app/polls/new", authentication.isAuthenticated, voting["new"]);
+    app.post("/voting-app/poll", authentication.isAuthenticated, voting.create);
+    app["delete"]("/voting-app/poll/:name", authentication.isAuthenticated, voting.destroy);
     app.get("/login", function(req, res) {
       req.user;
       return res.render("login.pug", {

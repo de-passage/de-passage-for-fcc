@@ -9,13 +9,13 @@ block content
       each poll in polls
         .card.p-1
           .card-block
-            h1.card-title
+            h3.card-title
               a(href="/voting-app/poll/" + poll.name) #{poll.name}
           .card-text #{poll.description}
           if user && (poll.user === user.name)
-            .btn-group.ml-auto
+            form.btn-group.ml-auto(method="post", action="/voting-app/poll/" + poll.name + "?_method=DELETE")
               a.btn.btn-secondary(href="/voting-app/poll/" + poll.name + "/edit") Edit
-              a.btn.btn-danger(href="/voting-app/poll/" + poll.name + "?_method=DELETE") Delete
+              button.btn.btn-danger(type="submit") Delete
       else
         | No polls
   if user

@@ -5,7 +5,8 @@ block title
 
 block content
   p= poll.description
-  p A poll by #{poll.user}
+  p A poll by 
+    strong #{poll.user}
   ul
     each option in Object.keys(poll.options)
       li= option

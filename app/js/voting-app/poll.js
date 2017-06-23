@@ -81,7 +81,9 @@
         if (this.id == null) {
           throw "This poll is not registered in the database";
         }
-        return db.remove(this.id);
+        return db.remove({
+          _id: ObjectId(this.id)
+        });
       };
 
       Poll.deserialize = function(obj) {

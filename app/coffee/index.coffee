@@ -37,7 +37,7 @@ db_connection (db) ->
   app.get "/voting-app/polls", voting.index
   app.get "/voting-app/poll/:name", voting.show
   app.get "/voting-app/poll/:name/edit", authentication.isAuthenticated, voting.edit
-  app.put "voting-app/poll/:name", authentication.isAuthenticated,  voting.update
+  app.put "/voting-app/poll/:name", authentication.isAuthenticated,  voting.update
   app.get "/voting-app/polls/new", authentication.isAuthenticated,  voting.new
   app.post "/voting-app/poll", authentication.isAuthenticated,  voting.create
   app.delete "/voting-app/poll/:name", authentication.isAuthenticated,  voting.destroy

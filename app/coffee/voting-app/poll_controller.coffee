@@ -25,12 +25,16 @@ module.exports = (Poll) ->
       res.render "polls/index.pug", user: req.user, polls: polls
 
   update: (req, res) ->
-    Poll.findOne name: req.body.name, (err, poll) ->
+    Poll.findOne name: req.params.name, (err, poll) ->
+      { name, description, options } = req.body
       poll.save()
       res.redirect "/voting-app/poll/#{encodeURIComponent poll.name}/edit"
 
 
   destroy: (req, res) ->
-    Poll.findOne name: req.body.name, (err, poll) ->
+    Poll.findOne name: req.params.name, (err, poll) ->
+      if poll.user != req.user.name
+        req.flash("error", "You are not authorized to perform this action")
+        return res.redirect "/voting-app"
       poll.delete()
       res.redirect "/voting-app/polls"

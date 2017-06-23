@@ -63,7 +63,7 @@ instanciatePoll = (db, ObjectId) ->
     # Remove the poll from the database
     delete: ->
       throw "This poll is not registered in the database" unless @id?
-      db.remove @id
+      db.remove _id: ObjectId @id
 
     @deserialize: (obj) ->
       poll = new Poll obj.owner, obj.name, obj.description

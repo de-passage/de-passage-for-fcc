@@ -59,7 +59,7 @@
       },
       destroy: function(req, res) {
         return Poll.findOne({
-          name: req.body.name
+          name: req.params.name
         }, function(err, poll) {
           poll["delete"]();
           return res.redirect("/voting-app/polls");

@@ -4,15 +4,8 @@ block title
   | New poll
 
 block content
-  form(method="post", action="/voting-app/poll")
-    .form-group
-      label(for="name") Name
-      input.form-control#name(type="text", name="name", placeholder="Name", required=true)
-    .form-group
-      label(for="description") Description
-      textarea.form-control#description(name="description", placeholder="Optional description", required=true)
-    .form-group#option-input
-    input.btn.btn-primary(type="submit", value="Save poll")
+  include _form.pug
+  +poll_form
 
 block scripts
   script(src="/scripts/vote_option_editor.js")

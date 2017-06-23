@@ -1,0 +1,17 @@
+mixin poll_form(poll, options)
+  -
+    var action = "/voting-app/poll/";
+    if(!poll) poll = {};
+    if(options && options.method)
+      action += poll.name + "?_method=" + options.method;
+  form(method="post", action=action)
+    .form-group
+      label(for="name") Name
+      input.form-control#name(type="text", name="name", placeholder="Name", value=poll.name, required=true)
+    .form-group
+      label(for="description") Description
+      textarea.form-control#description(name="description", placeholder="Optional description", required=true)
+        | #{poll.description}
+    .form-group#option-input
+    input.btn.btn-primary(type="submit", value="Save poll")
+

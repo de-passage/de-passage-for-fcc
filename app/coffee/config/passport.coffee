@@ -18,7 +18,7 @@ module.exports = (User) ->
     }, (req, email, password, done) ->
       User.findOne email: email, (err, user) ->
         return done err if err
-        return done null, false, req.flash("loginMessage", "The email address or password is incorrect") unless user and user.verifyPassword password
+        return done null, false, req.flash("error", "The email address or password is incorrect") unless user and user.verifyPassword password
         done null, user
 
   passport.use "local-signup", new LocalStrategy {
@@ -27,7 +27,7 @@ module.exports = (User) ->
       }, (req, email, password, done) ->
         User.findOne $or: [{email: email}, {username: req.body.username}] , (err, user) ->
           return done err if err
-          return done null, false, req.flash('signupMessage', "This email adress is already taken") if user
+          return done null, false, req.flash('error', "This email adress is already taken") if user
           newUser = new User(req.body.username, email, {})
           newUser.setPassword(password)
           newUser.save done

@@ -47,14 +47,14 @@
     app.get("/login", function(req, res) {
       req.user;
       return res.render("login.pug", {
-        message: req.flash("loginMessage"),
+        flash: req.flash(),
         user: req.user
       });
     });
     app.post("/login", authentication.login);
     app.get("/signup", function(req, res) {
       return res.render("signup.pug", {
-        message: req.flash("signupMessage"),
+        flash: req.flash(),
         user: req.user
       });
     });
@@ -62,7 +62,8 @@
     app.get("/logout", authentication.logout);
     app.get("/profile", authentication.isAuthenticated, function(req, res) {
       return res.render("profile.pug", {
-        user: req.user
+        user: req.user,
+        flash: req.flash
       });
     });
     app.listen(port);

@@ -32,6 +32,12 @@
 
   app.set('view engine', 'pug');
 
+  app.use(session({
+    secret: secret,
+    resave: false,
+    saveUninitialized: false
+  }));
+
   app.use(body_parser.json());
 
   app.use(body_parser.urlencoded({
@@ -39,12 +45,6 @@
   }));
 
   app.use(cookieParser());
-
-  app.use(session({
-    secret: secret,
-    resave: false,
-    saveUninitialized: false
-  }));
 
   app.use(passport.initialize());
 

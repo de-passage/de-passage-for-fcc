@@ -34,7 +34,7 @@
           return done(err);
         }
         if (!(user && user.verifyPassword(password))) {
-          return done(null, false, req.flash("loginMessage", "The email address or password is incorrect"));
+          return done(null, false, req.flash("error", "The email address or password is incorrect"));
         }
         return done(null, user);
       });
@@ -57,7 +57,7 @@
           return done(err);
         }
         if (user) {
-          return done(null, false, req.flash('signupMessage', "This email adress is already taken"));
+          return done(null, false, req.flash('error', "This email adress is already taken"));
         }
         newUser = new User(req.body.username, email, {});
         newUser.setPassword(password);

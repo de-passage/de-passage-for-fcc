@@ -36,8 +36,37 @@ html(lang="en")
       h1
         block title
 
-      if(message)
-        p= message
+      -
+        var errors = flash["error"];
+        var alerts = flash["alert"];
+        var infos = flash["info"];
+        var successes = flash["success"];
+
+      if(errors)
+        .alert.alert-danger.alert-dismissible.fade.show(role="alert")
+          button.close(type="button", data-dismiss="alert", aria-label="Close")
+            span(aria-hidden=true) &times;
+          each error in errors
+            strong= error
+      if(alerts)
+        .alert.alert-warning.alert-dismissible.fade.show(role="alert")
+          button.close(type="button", data-dismiss="alert", aria-label="Close")
+            span(aria-hidden=true) &times;
+          each alert in alerts
+            strong= alert
+      if(infos)
+        .alert.alert-info.alert-dismissible.fade.show(role="alert")
+          button.close(type="button", data-dismiss="alert", aria-label="Close")
+            span(aria-hidden=true) &times;
+          each info in infos
+            strong= info
+      if(successes)
+        .alert.alert-success.alert-dismissible.fade.show(role="alert")
+          button.close(type="button", data-dismiss="alert", aria-label="Close")
+            span(aria-hidden=true) &times;
+          each success in successes
+            strong= success
+
 
       block content
 

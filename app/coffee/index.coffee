@@ -43,16 +43,16 @@ db_connection (db) ->
   app.delete "/voting-app/poll/:name", authentication.isAuthenticated,  voting.destroy
 
   # Authentication
-  app.get "/login", (req, res) -> req.user; res.render "login.pug", message: req.flash("loginMessage"), user: req.user
+  app.get "/login", (req, res) -> req.user; res.render "login.pug", flash: req.flash(), user: req.user
   app.post "/login", authentication.login
 
-  app.get "/signup", (req, res) -> res.render "signup.pug", message: req.flash("signupMessage"), user: req.user
+  app.get "/signup", (req, res) -> res.render "signup.pug", flash: req.flash(), user: req.user
   app.post "/signup", authentication.signup
 
   app.get "/logout", authentication.logout
 
   # User profile
-  app.get "/profile", authentication.isAuthenticated, (req, res) -> res.render "profile.pug", user: req.user
+  app.get "/profile", authentication.isAuthenticated, (req, res) -> res.render "profile.pug", user: req.user, flash: req.flash
 
 
   # Start the application

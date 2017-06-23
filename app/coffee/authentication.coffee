@@ -23,5 +23,5 @@ module.exports = (db) ->
   isAuthenticated:
     (req, res, next) ->
       return next() if req.isAuthenticated()
-      req.flash "loginMessage", "You need to authenticate to access this page"
+      req.flash "alert", "You need to authenticate to access this page"
       res.redirect("/login")

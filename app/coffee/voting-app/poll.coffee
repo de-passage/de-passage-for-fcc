@@ -7,7 +7,7 @@ instanciatePoll = (db, ObjectId) ->
 
   class Poll
 
-    # Builds a new poll. 
+    # Builds a new poll.
     # Requires a database adapter with the right interface, a user and a name
     # May have a description and options
     constructor: (@user, @name, @description, options) ->
@@ -22,7 +22,7 @@ instanciatePoll = (db, ObjectId) ->
         @addOption option, @user for option in options
       else if options?
         @addOption options, @user
-      
+
 
     # Save the current state of the poll in the database
     save: (callback) ->
@@ -31,7 +31,7 @@ instanciatePoll = (db, ObjectId) ->
         if callback?
           return callback err if err
           callback null, @
-        
+
 
 
     # Add a new option to the poll
@@ -55,11 +55,11 @@ instanciatePoll = (db, ObjectId) ->
         @options[@voter[username]].count--
       @options[option].count++
       @voter[username] = option
-      
+
     optionCount: ->
       Object.keys(@options).length
 
-      
+
     # Remove the poll from the database
     delete: ->
       throw "This poll is not registered in the database" unless @id?
@@ -70,6 +70,7 @@ instanciatePoll = (db, ObjectId) ->
       poll.id = obj._id if obj._id?
       poll.options = obj.options if obj.options?
       poll.voters = obj.voters if obj.voters?
+      poll.created_at = obj.created_at
       poll
 
     serialize: () ->
@@ -79,6 +80,7 @@ instanciatePoll = (db, ObjectId) ->
         description: @description
         options: @options
         voters: @voters
+        created_at: @created_at || (new Date).getTime()
       obj._id = ObjectId(@id) if @id?
       obj
 
@@ -96,7 +98,7 @@ instanciatePoll = (db, ObjectId) ->
         callback = limit
       else
         cursor = cursor.limit(limit)
-      cursor.toArray (arr) => 
+      cursor.toArray (arr) =>
         arr ||= []
         callback null, arr.map @deserialize
 

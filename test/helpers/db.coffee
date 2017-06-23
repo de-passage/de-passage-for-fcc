@@ -10,7 +10,7 @@ class MockCollection
   constructor: (values) ->
     @values = []
     @ids = 0
-    @save value for value in values
+    @save value for value in values if values?
 
 
   save: (obj, callback) ->

@@ -6,7 +6,9 @@ module.exports = (Poll) ->
 
   create: (req, res) ->
     { name, description, options } = req.body
-    poll = new Poll(req.user.name, name, description, Array.slice.call(options))
+    if options?
+      options = Array.slice.call(options)
+    poll = new Poll(req.user.name, name, description, options)
     poll.save (err, poll) ->
       return res.redirect "/voting-app/polls/new" if err
       res.redirect "/voting-app/poll/#{encodeURIComponent poll.name}"

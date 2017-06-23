@@ -4,6 +4,13 @@ block title
   | Polls
 
 block content
-  - polls.forEach(function(poll) {
-  p= poll
-  - });
+  ul.list-group
+  each poll in polls
+    li.list-group-item 
+      a(href="/voting-app/poll/#{poll.name}") 
+      if user && poll.owner == user.name
+        .btn-group.ml-auto
+          a(href="/voting-app/poll/#{poll.name}")
+
+      
+

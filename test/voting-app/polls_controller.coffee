@@ -7,12 +7,16 @@ assert = require("chai").assert
 MockCollection = require "../helpers/db.coffee"
 PollC = require("../../app/coffee/voting-app/poll.coffee")
 UserC = require "../../app/coffee/user.coffee"
-db = new MockCollection [ { name: "poll1", owner: "user1", description: "desc1" } ]
-polls = db.values
+
+db = new MockCollection
 
 Poll = PollC db, (x) -> x
 User = UserC db
 pollController = pollControllerC Poll
+db_values = [ { name: "poll1", owner: "user1", description: "desc1" } ]
+Poll.deserialize(value).save() for value in db_values
+polls = db.values
+
 
 describe "Poll controller", ->
 
@@ -65,9 +69,9 @@ describe "Poll controller", ->
 
   it "should add a poll to the database on create", ->
     req.body = { name: "poll1", description: "desc1" }
-    database.expects("save").once().withArgs new Poll("user1", "poll1", "desc1").serialize()
+    expectedLength = db.values.length + 1
     pollController.create(req, res)
-    database.verify()
+    assert(db.values.length == expectedLength, "Expected #{expectedLength} elements in the database, but had #{db.values.length})")
 
   it "should redirect to the individual show page after create", ->
     req = body: {name: "poll1"}, user: new User("user1", "email")
@@ -78,7 +82,7 @@ describe "Poll controller", ->
 
   it "should change a poll in the database on update", ->
     req.body = { name: "poll1", description: "desc1" }
-    poll = Poll.deserialize(polls[0]).serialize() #transforming the object to fit the format used internally
+    poll = polls[0]
     database.expects("save").once().withArgs poll
     pollController.update(req, res)
     database.verify()

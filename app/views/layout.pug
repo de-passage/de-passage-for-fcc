@@ -6,21 +6,36 @@ html(lang="en")
     meta(name="viewport", content="width=device-width, initial-scale=1.0, shrink-to-fit=no")
     link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous")
   body 
-    nav.navbar
-      - if(user) {
-      span #{user.name}
-      span &lt;#{user.email}&gt;
-      a(href="/logout") Log out
-      - }
-    .container
+    nav.navbar.navbar-toggleable-md.navbar-light.bg-faded
+      button.navbar-toggler.navbar-toggler-right(type="button", data-toggle="collapse", aria-label="Toggle navigation", data-target="#navbarToggler", aria-controls="navbarToggler", aria-expanded="false")
+        span.navbar-toggler-icon
 
-      - if(message) {
-      p= message
-      - }
+      a.navbar-brand(href="/home") Home
+
+      .collapse.navbar-collapse#navbarToggler
+        ul.navbar-nav.mr-auto
+          li.nav-item
+            a.nav-link(href="/voting-app/polls") Polls
+        ul.navbar-nav.ml-auto
+          if user
+            li.nav-item.dropdown
+              a.nav-link.dropdown-toggle#navbarDropdownMenu(href="#", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") #{user.name}
+              .dropdown-menu.bg-faded(aria-labelledby="navbarDropdownMenu")
+                  a.dropdown-item(href="/profile") Profile
+                  .dropdown-divider
+                  a.dropdown-item(href="/logout") Log out
+          else
+            li.nav-item
+              a.nav-link(href="/login") Log in
+
+    .container(style="margin-top: 15px")
 
       h1
         block title
 
+      if(message)
+        p= message
+    
       block content
 
     script(src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous")

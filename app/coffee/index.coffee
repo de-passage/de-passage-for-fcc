@@ -33,6 +33,7 @@ db_connection (db) ->
     res.json size: req.file.size
   
   # Voting app
+  app.get "/voting-app", (req, res) -> res.redirect "/voting-app/polls"
   app.get "/voting-app/polls", voting.index
   app.get "/voting-app/poll/:name", voting.show
   app.get "/voting-app/poll/:name/edit", authentication.isAuthenticated, voting.edit

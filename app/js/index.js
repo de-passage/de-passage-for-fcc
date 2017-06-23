@@ -34,6 +34,9 @@
         size: req.file.size
       });
     });
+    app.get("/voting-app", function(req, res) {
+      return res.redirect("/voting-app/polls");
+    });
     app.get("/voting-app/polls", voting.index);
     app.get("/voting-app/poll/:name", voting.show);
     app.get("/voting-app/poll/:name/edit", authentication.isAuthenticated, voting.edit);

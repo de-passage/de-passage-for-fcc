@@ -93,12 +93,13 @@ instanciatePoll = (db, ObjectId) ->
         callback null, result
 
     @all: (limit, callback) ->
-      cursor = db.find()
+      cursor = db.find({})
       if typeof limit is "function"
         callback = limit
       else
         cursor = cursor.limit(limit)
-      cursor.toArray (arr) =>
+      cursor.toArray (err, arr) =>
+        return callback err if err
         arr ||= []
         callback null, arr.map @deserialize
 

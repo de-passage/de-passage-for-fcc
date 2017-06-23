@@ -96,6 +96,7 @@
         if (obj.voters != null) {
           poll.voters = obj.voters;
         }
+        poll.created_at = obj.created_at;
         return poll;
       };
 
@@ -106,7 +107,8 @@
           name: this.name,
           description: this.description,
           options: this.options,
-          voters: this.voters
+          voters: this.voters,
+          created_at: this.created_at || (new Date).getTime()
         };
         if (this.id != null) {
           obj._id = ObjectId(this.id);
@@ -132,14 +134,17 @@
 
       Poll.all = function(limit, callback) {
         var cursor;
-        cursor = db.find();
+        cursor = db.find({});
         if (typeof limit === "function") {
           callback = limit;
         } else {
           cursor = cursor.limit(limit);
         }
         return cursor.toArray((function(_this) {
-          return function(arr) {
+          return function(err, arr) {
+            if (err) {
+              return callback(err);
+            }
             arr || (arr = []);
             return callback(null, arr.map(_this.deserialize));
           };

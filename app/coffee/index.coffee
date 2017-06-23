@@ -28,10 +28,10 @@ db_connection (db) ->
 
   # File Metadata microservice #
   app.get "/filedata", (req, res) -> res.render "filesize.pug"
-  
+
   app.post "/filedata", upload.single('file'), (req, res) ->
     res.json size: req.file.size
-  
+
   # Voting app
   app.get "/voting-app", (req, res) -> res.redirect "/voting-app/polls"
   app.get "/voting-app/polls", voting.index
@@ -48,7 +48,7 @@ db_connection (db) ->
 
   app.get "/signup", (req, res) -> res.render "signup.pug", message: req.flash("signupMessage"), user: req.user
   app.post "/signup", authentication.signup
-  
+
   app.get "/logout", authentication.logout
 
   # User profile

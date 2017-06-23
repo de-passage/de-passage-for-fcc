@@ -15,7 +15,7 @@ module.exports = (Poll) ->
 
   new: (req, res) ->
     res.render "polls/new.pug", user: req.user
-  
+
   edit: (req, res) ->
     Poll.findOne name: req.params.name, (err, poll) ->
       res.render "polls/edit.pug", user: req.user, poll: poll

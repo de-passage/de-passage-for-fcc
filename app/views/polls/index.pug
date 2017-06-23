@@ -4,13 +4,22 @@ block title
   | Polls
 
 block content
-  ul.list-group
-  each poll in polls
-    li.list-group-item 
-      a(href="/voting-app/poll/#{poll.name}") 
-      if user && poll.owner == user.name
-        .btn-group.ml-auto
-          a(href="/voting-app/poll/#{poll.name}")
-
-      
+  .row
+    .card-group
+      each poll in polls
+        .card.p-1
+          .card-block
+            h1.card-title
+              a(href="/voting-app/poll/" + poll.name) #{poll.name}
+          .card-text #{poll.description}
+          if user && (poll.user === user.name)
+            .btn-group.ml-auto
+              a.btn.btn-secondary(href="/voting-app/poll/" + poll.name + "/edit") Edit
+              a.btn.btn-danger(href="/voting-app/poll/" + poll.name + "?_method=DELETE") Delete
+      else
+        | No polls
+  if user
+    .row.mt-3
+      .btn-group.mr-auto
+        a.btn.btn-primary(href="/voting-app/polls/new") New poll
 

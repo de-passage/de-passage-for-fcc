@@ -48,7 +48,9 @@
 
   app.use(flash());
 
-  app.use('/styles', express["static"](path.join(__dirname, '../../public/styles')));
+  app.use('/styles', express["static"](path.join(__dirname, '../../../public/styles')));
+
+  app.use('/scripts', express["static"](path.join(__dirname, '../../../public/javascript')));
 
   module.exports = app;
 

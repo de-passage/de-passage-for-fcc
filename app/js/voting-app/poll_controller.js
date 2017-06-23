@@ -15,7 +15,10 @@
       create: function(req, res) {
         var description, name, options, poll, ref;
         ref = req.body, name = ref.name, description = ref.description, options = ref.options;
-        poll = new Poll(req.user.name, name, description, Array.slice.call(options));
+        if (options != null) {
+          options = Array.slice.call(options);
+        }
+        poll = new Poll(req.user.name, name, description, options);
         return poll.save(function(err, poll) {
           if (err) {
             return res.redirect("/voting-app/polls/new");

@@ -5,12 +5,8 @@ block title
 
 block content
   p= poll.description
-    span A poll by #{poll.owner}
+  p A poll by #{poll.user}
   ul
-  - Object.keys(poll.options).forEach(function(option) {
-    li= option
-  - });
-	
-
-	
+    each option in Object.keys(poll.options)
+      li= option
 

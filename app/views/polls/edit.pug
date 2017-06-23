@@ -5,7 +5,7 @@ block title
 
 block content
   form(method="post", action="/voting-app/#{poll.name}?_method=PUT")
-    input(type="text", name="name", placeholder="Name")
-    textarea(name="description", placeholder="Optional description")
+    input(type="text", name="name", placeholder="Name", required=true)
+    textarea(name="description", placeholder="Optional description", required=true)
     #option-input
-    input(type="submit", text="Save poll")
+    input(type="submit", value="Save poll")

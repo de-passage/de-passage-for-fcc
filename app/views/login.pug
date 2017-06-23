@@ -5,8 +5,12 @@ block title
 
 block content
   form(action="/login", method="post")
-    input(type="email", name="email", placeholder="Email address")
-    input(type="password", name="password", placeholder="Password")
-    input(type="Submit", text="Log in" )
+    .form-group
+      label(for="email") Email
+      input.form-control#email(type="email", name="email", placeholder="Email address")
+    .form-group
+      label(for="password") Password
+      input.form-control#password(type="password", name="password", placeholder="Password")
+    input.btn.btn-primary(type="Submit", value="Log in")
 
 

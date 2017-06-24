@@ -13,5 +13,13 @@ mixin poll_form(poll, options)
       textarea.form-control#description(name="description", placeholder="Optional description", required=true)
         | #{poll.description}
     .form-group#option-input
+      label(for="option-list-group") Options
+      ul.list-group#options-list-group
+        each option, i in poll.options
+          li.list-group-item(id="option-wrapper-" + i)
+            input(type="text", name="options[" + i + "]", value=option, required=true)
+            button(type="button", id="delete-option-" + i) &times;
+        li.list-group-item#add-option-li
+          button(type="button", id="add-option") &plus;
     input.btn.btn-primary(type="submit", value="Save poll")
 

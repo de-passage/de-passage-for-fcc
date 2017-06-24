@@ -4,7 +4,7 @@ class Cursor
   limit: ->
     @
   toArray: (callback) ->
-    callback @ref
+    callback null, @ref
 
 class MockCollection
   constructor: (values) ->

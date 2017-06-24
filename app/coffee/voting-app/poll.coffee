@@ -56,8 +56,22 @@ instanciatePoll = (db, ObjectId) ->
       @options[option].count++
       @voter[username] = option
 
+    hasVoted: (username) ->
+      @voter[username]?
+
     optionCount: ->
       Object.keys(@options).length
+
+    replaceOptions: (newOptions, user) ->
+      oldOptions = @options
+      @options = {}
+      for optionRaw in newOptions
+        option = optionRaw.trim()
+        if oldOptions[option]?
+          @options[option] = oldOptions[option]
+        else
+          @addOption { description: option }, user
+
 
 
     # Remove the poll from the database

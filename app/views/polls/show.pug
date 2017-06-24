@@ -11,3 +11,8 @@ block content
     each option in Object.keys(poll.options)
       li= option
 
+  if(user && user.name == poll.user)
+    .btn-group
+      a.btn.btn-secondary(href="/voting-app/poll/" + poll.name + "/edit") Edit
+      a.btn.btn-danger(href="/voting-app/poll/" + poll.name + "?_method=DELETE") Delete
+

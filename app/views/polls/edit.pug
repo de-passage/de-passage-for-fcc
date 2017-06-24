@@ -7,3 +7,5 @@ block content
   include _form.pug
   +poll_form(poll, { method: "PUT"})
 
+block scripts
+  script(src="/scripts/vote_option_editor.js")

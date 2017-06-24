@@ -91,20 +91,20 @@
         });
       },
       update: function(req, res) {
+        var description, name, options, ref;
+        ref = req.body, name = ref.name, description = ref.description, options = ref.options;
         return Poll.findOne({
           name: req.params.name
         }, function(err, poll) {
-          var description, name, options, ref;
           if (redirectOnDBError(err, "/voting-app/poll/" + (encodeURIComponent(req.params.name)))) {
             return;
           }
-          ref = req.body, name = ref.name, description = ref.description, options = ref.options;
           return poll.save(function(err, poll) {
             if (redirectOnDBError(err, "/voting-app/poll/" + (encodeURIComponent(poll.name)) + "/edit")) {
               return;
             }
             req.flash("success", "The poll '" + poll.name + "' has been updated");
-            return res.redirect("/voting-app/poll/" + (encodeURIComponent(poll.name)) + "/edit");
+            return res.redirect("/voting-app/poll/" + (encodeURIComponent(poll.name)));
           });
         });
       },

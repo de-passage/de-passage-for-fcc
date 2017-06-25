@@ -4,12 +4,19 @@ redirectOnDBError = (err, route, req, res) ->
     res.redirect route
     true
   else false
+
 redirectUnlessFound = (poll, name, req, res) ->
   if !poll
     req.flash "error", "Poll '#{name}' not found"
     res.redirect "/voting-app/polls"
     true
   else false
+
+serializeUser = (req) ->
+  if req.user
+    req.user.name
+  else
+    "anonymous:" + req.ip + ":" + req.get("User-Agent")
 
 
 module.exports = (Poll) ->
@@ -18,7 +25,7 @@ module.exports = (Poll) ->
     Poll.findOne name: req.params.name, (err, poll) ->
       return if redirectOnDBError err, "/voting-app/polls", req, res
       return if redirectUnlessFound poll, req.params.name, req, res
-      res.render "polls/show.pug", poll: poll, user: req.user, flash: req.flash()
+      res.render "polls/show.pug", poll: poll, user: req.user, flash: req.flash(), hasVoted: poll.hasVoted(serializeUser)
 
   create: (req, res) ->
     { name, description, options } = req.body
@@ -89,12 +96,9 @@ module.exports = (Poll) ->
 
   vote: (req, res) ->
     { name, option } = req.body
-    user =
-      if req.user.isAuthenticated()
-        req.user.name
-      else
-        "anonymous:" + req.ip + ":" + req.get("User-Agent")
+    user = serializeUser(req)
     return res.status(400).json { error: "Missing body parameter name or option" } unless name? and body?
+
     Poll.findOne req.body.name, (err, poll) ->
       return res.status(500).json err if err
       return if res.status(400).json { error: "Poll not found" } unless poll

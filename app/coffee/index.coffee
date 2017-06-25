@@ -41,6 +41,7 @@ db_connection (db) ->
   app.get "/voting-app/polls/new", authentication.isAuthenticated,  voting.new
   app.post "/voting-app/poll", authentication.isAuthenticated,  voting.create
   app.delete "/voting-app/poll/:name", authentication.isAuthenticated,  voting.destroy
+  app.post "/voting-app/polls/vote", voting.vote
 
   # Authentication
   app.get "/login", (req, res) -> res.render "login.pug", flash: req.flash(), user: req.user, redirect: req.query.redirect

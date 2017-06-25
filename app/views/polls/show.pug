@@ -4,23 +4,42 @@ block title
   | #{poll.name}
 
 block content
-  p 
+  p
     small A poll by 
       strong #{poll.user}
 
   p= poll.description
-  form
-    .form-group
-      each option, i in Object.keys(poll.options)
-        .form-check
-          label.form-check-label
-            input.form-check-input(type="radio", name="option", required=true, value=option, checked= !i ? "checked" : false)
-            | #{option}
-    .btn-group
+  if !hasVoted
+    form#vote-form
+      input(type="hidden", name="name", value=poll.name)
+      .form-group
+        each option, i in Object.keys(poll.options)
+          .form-check
+            label.form-check-label
+              input.form-check-input(type="radio", name="option", required=true, value=option, checked= !i ? "checked" : false)
+              | #{option}
+  else
+    .poll-results
+      - var total = 0
+      each votes, option in poll.options
+        div.option-result
+          span.option-name #{option}
+          | : 
+          span.vote-count #{votes.count} 
+          | votes
+        - total += votes.count
+      div
+
+  .btn-group
+    if !hasVoted
       button.btn.btn-primary#vote-btn(type="submit") Vote!
-      if user
-        button.btn.btn-secondary#add-option-btn(type="button") Add option
-        if(user.name == poll.user)
-          a.btn.btn-secondary(href="/voting-app/poll/" + poll.name + "/edit") Edit
-          a.btn.btn-danger(href="/voting-app/poll/" + poll.name + "?_method=DELETE") Delete
+    if user
+      button.btn.btn-secondary#add-option-btn(type="button") Add option
+      if(user.name == poll.user)
+        a.btn.btn-secondary(href="/voting-app/poll/" + poll.name + "/edit") Edit
+        a.btn.btn-danger(href="/voting-app/poll/" + poll.name + "?_method=DELETE") Delete
+
+block scripts
+  script(src="https://code.jquery.com/jquery-3.1.1.min.js")
+  script(src="/scripts/vote.js")
 

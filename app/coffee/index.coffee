@@ -43,8 +43,8 @@ db_connection (db) ->
   app.delete "/voting-app/poll/:name", authentication.isAuthenticated,  voting.destroy
 
   # Authentication
-  app.get "/login", (req, res) -> req.user; res.render "login.pug", flash: req.flash(), user: req.user
-  app.post "/login", authentication.login
+  app.get "/login", (req, res) -> res.render "login.pug", flash: req.flash(), user: req.user, redirect: req.query.redirect
+  app.post "/login", authentication.login, (req, res) -> res.redirect if req.body.redirect then req.body.redirect else "/profile"
 
   app.get "/signup", (req, res) -> res.render "signup.pug", flash: req.flash(), user: req.user
   app.post "/signup", authentication.signup

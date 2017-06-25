@@ -6,7 +6,6 @@
     passport = require("./config/passport.js")(User);
     return {
       login: passport.authenticate("local-login", {
-        successRedirect: "/profile",
         failureRedirect: "/login",
         failureFlash: true
       }),
@@ -24,7 +23,7 @@
           return next();
         }
         req.flash("alert", "You need to authenticate to access this page");
-        return res.redirect("/login");
+        return res.redirect("/login?redirect=" + (encodeURIComponent(req.url)));
       }
     };
   };

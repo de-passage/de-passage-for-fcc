@@ -65,12 +65,11 @@ instanciatePoll = (db, ObjectId) ->
     replaceOptions: (newOptions, user) ->
       oldOptions = @options
       @options = {}
-      for optionRaw in newOptions
-        option = optionRaw.trim()
-        if oldOptions[option]?
-          @options[option] = oldOptions[option]
+      for key, value of newOptions
+        if oldOptions[key]?
+          @options[value] = oldOptions[key]
         else
-          @addOption { description: option }, user
+          @addOption { description: value }, user
 
 
 

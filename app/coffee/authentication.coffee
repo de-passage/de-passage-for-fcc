@@ -5,7 +5,7 @@ module.exports = (db) ->
 
   login:
     passport.authenticate "local-login",
-      successRedirect: "/profile"
+      #successRedirect: "/profile"
       failureRedirect: "/login"
       failureFlash: true
 
@@ -24,4 +24,4 @@ module.exports = (db) ->
     (req, res, next) ->
       return next() if req.isAuthenticated()
       req.flash "alert", "You need to authenticate to access this page"
-      res.redirect("/login")
+      res.redirect("/login?redirect=#{encodeURIComponent(req.url)}")

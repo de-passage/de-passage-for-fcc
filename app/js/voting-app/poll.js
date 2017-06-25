@@ -73,8 +73,30 @@
         return this.voter[username] = option;
       };
 
+      Poll.prototype.hasVoted = function(username) {
+        return this.voter[username] != null;
+      };
+
       Poll.prototype.optionCount = function() {
         return Object.keys(this.options).length;
+      };
+
+      Poll.prototype.replaceOptions = function(newOptions, user) {
+        var key, oldOptions, results, value;
+        oldOptions = this.options;
+        this.options = {};
+        results = [];
+        for (key in newOptions) {
+          value = newOptions[key];
+          if (oldOptions[key] != null) {
+            results.push(this.options[value] = oldOptions[key]);
+          } else {
+            results.push(this.addOption({
+              description: value
+            }, user));
+          }
+        }
+        return results;
       };
 
       Poll.prototype["delete"] = function() {

@@ -5,6 +5,8 @@ block title
 
 block content
   form(action="/login", method="post")
+    if redirect
+      input(type="hidden", name="redirect", value=redirect)
     .form-group
       label(for="email") Email
       input.form-control#email(type="email", name="email", placeholder="Email address")

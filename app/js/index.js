@@ -45,13 +45,17 @@
     app.post("/voting-app/poll", authentication.isAuthenticated, voting.create);
     app["delete"]("/voting-app/poll/:name", authentication.isAuthenticated, voting.destroy);
     app.get("/login", function(req, res) {
-      req.user;
+      console.log("query: ", req.query);
       return res.render("login.pug", {
         flash: req.flash(),
-        user: req.user
+        user: req.user,
+        redirect: req.query.redirect
       });
     });
-    app.post("/login", authentication.login);
+    app.post("/login", authentication.login, function(req, res) {
+      console.log("BODY: ", req.body);
+      return res.redirect(req.body.redirect ? req.body.redirect : "/profile");
+    });
     app.get("/signup", function(req, res) {
       return res.render("signup.pug", {
         flash: req.flash(),

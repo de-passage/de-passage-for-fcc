@@ -23,7 +23,7 @@ module.exports = (Poll) ->
   create: (req, res) ->
     { name, description, options } = req.body
     if options?
-      options = Array.slice.call(options)
+      options = Array.slice.call(options).map (v) -> { description: v }
     poll = new Poll(req.user.name, name, description, options)
     poll.save (err, poll) ->
       return if redirectOnDBError err, "/voting-app/polls/new", req, res
@@ -56,7 +56,9 @@ module.exports = (Poll) ->
           poll.name = name if name?
           poll.description = description if description?
           if options?
-            poll.replaceOptions options
+            poll.replaceOptions options, req.user.name
+          else
+            poll.options = {}
         else
           req.flash("error", "You are not authorized to perform this action")
           return res.redirect "/voting-app/poll/#{encodeURIComponent poll.name}"
@@ -66,7 +68,6 @@ module.exports = (Poll) ->
             poll.addOption { description: option }, req.user.name
         else
           poll.addOption { description: options }, req.user.name
-
 
       poll.save (err, poll) ->
         return if redirectOnDBError err, "/voting-app/poll/#{encodeURIComponent poll.name}/edit", req, res

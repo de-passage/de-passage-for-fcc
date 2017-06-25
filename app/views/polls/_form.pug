@@ -15,10 +15,11 @@ mixin poll_form(poll, options)
     .form-group#option-input
       label(for="option-list-group") Options
       ul.list-group#options-list-group
-        each option, i in poll.options
-          li.list-group-item(id="option-wrapper-" + i)
-            input(type="text", name="options[" + i + "]", value=option, required=true)
-            button(type="button", id="delete-option-" + i) &times;
+        if option
+          each option, i in Object.keys(poll.options)
+            li.list-group-item(id="option-wrapper-" + i)
+              input.form-control(type="text", name="options['" + option + "']", value=option, required=true, style="width: 70%")
+              button.btn.btn-danger(type="button", id="delete-option-" + i) &times;
         li.list-group-item#add-option-li
           button(type="button", id="add-option") &plus;
     input.btn.btn-primary(type="submit", value="Save poll")

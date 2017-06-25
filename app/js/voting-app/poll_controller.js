@@ -2,20 +2,20 @@
 (function() {
   var redirectOnDBError, redirectUnlessFound;
 
-  redirectOnDBError = function(err, route) {
+  redirectOnDBError = function(err, route, req, res) {
     if (err) {
-      flash("error", "An unexpected error has occured when calling the database: " + (JSON.stringify(err)));
-      redirect(route);
+      req.flash("error", "An unexpected error has occured when calling the database: " + (JSON.stringify(err)));
+      res.redirect(route);
       return true;
     } else {
       return false;
     }
   };
 
-  redirectUnlessFound = function(poll, name) {
+  redirectUnlessFound = function(poll, name, req, res) {
     if (!poll) {
-      flash("error", "Poll '" + name + "' not found");
-      redirect("/voting-app/polls");
+      req.flash("error", "Poll '" + name + "' not found");
+      res.redirect("/voting-app/polls");
       return true;
     } else {
       return false;
@@ -28,10 +28,10 @@
         return Poll.findOne({
           name: req.params.name
         }, function(err, poll) {
-          if (redirectOnDBError(err, "/voting-app/polls")) {
+          if (redirectOnDBError(err, "/voting-app/polls", req, res)) {
             return;
           }
-          if (redirectUnlessFound(poll, req.params.name)) {
+          if (redirectUnlessFound(poll, req.params.name, req, res)) {
             return;
           }
           return res.render("polls/show.pug", {
@@ -45,11 +45,15 @@
         var description, name, options, poll, ref;
         ref = req.body, name = ref.name, description = ref.description, options = ref.options;
         if (options != null) {
-          options = Array.slice.call(options);
+          options = Array.slice.call(options).map(function(v) {
+            return {
+              description: v
+            };
+          });
         }
         poll = new Poll(req.user.name, name, description, options);
         return poll.save(function(err, poll) {
-          if (redirectOnDBError(err, "/voting-app/polls/new")) {
+          if (redirectOnDBError(err, "/voting-app/polls/new", req, res)) {
             return;
           }
           return res.redirect("/voting-app/poll/" + (encodeURIComponent(poll.name)));
@@ -65,10 +69,10 @@
         return Poll.findOne({
           name: req.params.name
         }, function(err, poll) {
-          if (redirectOnDBError(err, "/voting-app/poll/" + (encodeURIComponent(poll.name)))) {
+          if (redirectOnDBError(err, "/voting-app/poll/" + (encodeURIComponent(poll.name)), req, res)) {
             return;
           }
-          if (redirectUnlessFound(poll, req.params.name)) {
+          if (redirectUnlessFound(poll, req.params.name, req, res)) {
             return;
           }
           return res.render("polls/edit.pug", {
@@ -80,7 +84,7 @@
       },
       index: function(req, res) {
         return Poll.all(function(err, polls) {
-          if (redirectOnDBError(err, "/")) {
+          if (redirectOnDBError(err, "/", req, res)) {
             return;
           }
           return res.render("polls/index.pug", {
@@ -96,14 +100,45 @@
         return Poll.findOne({
           name: req.params.name
         }, function(err, poll) {
-          if (redirectOnDBError(err, "/voting-app/poll/" + (encodeURIComponent(req.params.name)))) {
+          var i, len, option;
+          if (redirectOnDBError(err, "/voting-app/poll/" + (encodeURIComponent(req.params.name)), req, res)) {
             return;
           }
+          if ((name != null) || (description != null)) {
+            if (req.user.name === poll.user) {
+              if (name != null) {
+                poll.name = name;
+              }
+              if (description != null) {
+                poll.description = description;
+              }
+              if (options != null) {
+                poll.replaceOptions(options, req.user.name);
+              } else {
+                poll.options = {};
+              }
+            } else {
+              req.flash("error", "You are not authorized to perform this action");
+              return res.redirect("/voting-app/poll/" + (encodeURIComponent(poll.name)));
+            }
+          } else if (options != null) {
+            if (Array.isArray(options)) {
+              for (i = 0, len = options.length; i < len; i++) {
+                option = options[i];
+                poll.addOption({
+                  description: option
+                }, req.user.name);
+              }
+            } else {
+              poll.addOption({
+                description: options
+              }, req.user.name);
+            }
+          }
           return poll.save(function(err, poll) {
-            if (redirectOnDBError(err, "/voting-app/poll/" + (encodeURIComponent(poll.name)) + "/edit")) {
+            if (redirectOnDBError(err, "/voting-app/poll/" + (encodeURIComponent(poll.name)) + "/edit", req, res)) {
               return;
             }
-            req.flash("success", "The poll '" + poll.name + "' has been updated");
             return res.redirect("/voting-app/poll/" + (encodeURIComponent(poll.name)));
           });
         });
@@ -112,7 +147,7 @@
         return Poll.findOne({
           name: req.params.name
         }, function(err, poll) {
-          if (redirectOnDBError(err, "/voting-app/poll/" + (encodeURIComponent(req.params.name)))) {
+          if (redirectOnDBError(err, "/voting-app/poll/" + (encodeURIComponent(req.params.name)), req, res)) {
             return;
           }
           if (redirectUnlessFound(poll, req.params.name)) {
@@ -125,6 +160,40 @@
           poll["delete"]();
           req.flash("success", "The poll '" + poll.name + "' has been deleted");
           return res.redirect("/voting-app/polls");
+        });
+      },
+      vote: function(req, res) {
+        var name, option, ref, user;
+        ref = req.body, name = ref.name, option = ref.option;
+        user = req.user.isAuthenticated() ? req.user.name : "anonymous:" + req.ip + ":" + req.get("User-Agent");
+        if (!((name != null) && (typeof body !== "undefined" && body !== null))) {
+          return res.status(400).json({
+            error: "Missing body parameter name or option"
+          });
+        }
+        return Poll.findOne(req.body.name, function(err, poll) {
+          var e;
+          if (err) {
+            return res.status(500).json(err);
+          }
+          if (!poll) {
+            if (res.status(400).json({
+              error: "Poll not found"
+            })) {
+              return;
+            }
+          }
+          try {
+            poll.vote(option, user);
+          } catch (_error) {
+            e = _error;
+            return res.status(400).json({
+              error: "Invalid option"
+            });
+          }
+          return poll.save(function() {
+            return res.json(poll.options);
+          });
         });
       }
     };

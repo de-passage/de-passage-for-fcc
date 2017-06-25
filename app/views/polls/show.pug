@@ -4,15 +4,23 @@ block title
   | #{poll.name}
 
 block content
-  p= poll.description
-  p A poll by 
-    strong #{poll.user}
-  ul
-    each option in Object.keys(poll.options)
-      li= option
+  p 
+    small A poll by 
+      strong #{poll.user}
 
-  if(user && user.name == poll.user)
+  p= poll.description
+  form
+    .form-group
+      each option, i in Object.keys(poll.options)
+        .form-check
+          label.form-check-label
+            input.form-check-input(type="radio", name="option", required=true, value=option, checked= !i ? "checked" : false)
+            | #{option}
     .btn-group
-      a.btn.btn-secondary(href="/voting-app/poll/" + poll.name + "/edit") Edit
-      a.btn.btn-danger(href="/voting-app/poll/" + poll.name + "?_method=DELETE") Delete
+      button.btn.btn-primary#vote-btn(type="submit") Vote!
+      if user
+        button.btn.btn-secondary#add-option-btn(type="button") Add option
+        if(user.name == poll.user)
+          a.btn.btn-secondary(href="/voting-app/poll/" + poll.name + "/edit") Edit
+          a.btn.btn-danger(href="/voting-app/poll/" + poll.name + "?_method=DELETE") Delete
 

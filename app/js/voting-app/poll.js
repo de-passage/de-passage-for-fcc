@@ -34,12 +34,17 @@
       Poll.prototype.save = function(callback) {
         return db.save(this.serialize(), (function(_this) {
           return function(err, obj) {
-            _this.id = obj._id;
             if (callback != null) {
               if (err) {
                 return callback(err);
               }
+              _this.id = obj._id;
               return callback(null, _this);
+            } else {
+              if (err) {
+                throw err;
+              }
+              return _this.id = obj._id;
             }
           };
         })(this));
@@ -66,15 +71,15 @@
         if (this.options[option] == null) {
           throw "Option '" + option + "' does not exist";
         }
-        if (this.voter[username] != null) {
-          this.options[this.voter[username]].count--;
+        if (this.voters[username] != null) {
+          this.options[this.voters[username]].count--;
         }
         this.options[option].count++;
-        return this.voter[username] = option;
+        return this.voters[username] = option;
       };
 
       Poll.prototype.hasVoted = function(username) {
-        return this.voter[username] != null;
+        return this.voters[username] != null;
       };
 
       Poll.prototype.optionCount = function() {

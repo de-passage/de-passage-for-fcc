@@ -3,7 +3,6 @@
   $(function() {
     var form;
     form = $("#vote-form");
-    console.log(JSON.stringify(form));
     if (form.length) {
       $("#vote-btn").click(function() {
         var option, pollName;
@@ -15,6 +14,12 @@
           data: {
             name: pollName,
             option: option
+          },
+          success: function(data) {
+            return console.log(JSON.stringify(data));
+          },
+          error: function(data) {
+            return console.log(JSON.stringify(data));
           }
         });
       });

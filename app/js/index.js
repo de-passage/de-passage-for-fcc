@@ -44,8 +44,8 @@
     app.get("/voting-app/polls/new", authentication.isAuthenticated, voting["new"]);
     app.post("/voting-app/poll", authentication.isAuthenticated, voting.create);
     app["delete"]("/voting-app/poll/:name", authentication.isAuthenticated, voting.destroy);
+    app.post("/voting-app/polls/vote", voting.vote);
     app.get("/login", function(req, res) {
-      console.log("query: ", req.query);
       return res.render("login.pug", {
         flash: req.flash(),
         user: req.user,
@@ -53,7 +53,6 @@
       });
     });
     app.post("/login", authentication.login, function(req, res) {
-      console.log("BODY: ", req.body);
       return res.redirect(req.body.redirect ? req.body.redirect : "/profile");
     });
     app.get("/signup", function(req, res) {

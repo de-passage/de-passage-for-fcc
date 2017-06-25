@@ -27,10 +27,13 @@ instanciatePoll = (db, ObjectId) ->
     # Save the current state of the poll in the database
     save: (callback) ->
       db.save @serialize(), (err, obj) =>
-        @id = obj._id
         if callback?
           return callback err if err
+          @id = obj._id
           callback null, @
+        else
+          throw err if err
+          @id = obj._id
 
 
 
@@ -51,13 +54,13 @@ instanciatePoll = (db, ObjectId) ->
     # Register a user's vote for an option
     vote: (option, username) ->
       throw "Option '#{option}' does not exist" unless @options[option]?
-      if @voter[username]?
-        @options[@voter[username]].count--
+      if @voters[username]?
+        @options[@voters[username]].count--
       @options[option].count++
-      @voter[username] = option
+      @voters[username] = option
 
     hasVoted: (username) ->
-      @voter[username]?
+      @voters[username]?
 
     optionCount: ->
       Object.keys(@options).length

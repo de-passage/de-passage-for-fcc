@@ -25,7 +25,10 @@ module.exports = (Poll) ->
     Poll.findOne name: req.params.name, (err, poll) ->
       return if redirectOnDBError err, "/voting-app/polls", req, res
       return if redirectUnlessFound poll, req.params.name, req, res
-      res.render "polls/show.pug", poll: poll, user: req.user, flash: req.flash(), hasVoted: poll.hasVoted(serializeUser)
+      u = serializeUser(req)
+      hv = poll.hasVoted(u)
+      console.log u, " > ", hv, "\n", poll.voters, "\n"
+      res.render "polls/show.pug", poll: poll, user: req.user, flash: req.flash(), hasVoted: hv
 
   create: (req, res) ->
     { name, description, options } = req.body
@@ -95,11 +98,13 @@ module.exports = (Poll) ->
       res.redirect "/voting-app/polls"
 
   vote: (req, res) ->
+    console.log req.body
     { name, option } = req.body
+    console.log name, option
     user = serializeUser(req)
-    return res.status(400).json { error: "Missing body parameter name or option" } unless name? and body?
+    return res.status(400).json { error: "Missing body parameter name or option" } unless name? and option?
 
-    Poll.findOne req.body.name, (err, poll) ->
+    Poll.findOne { name: name }, (err, poll) ->
       return res.status(500).json err if err
       return if res.status(400).json { error: "Poll not found" } unless poll
 
@@ -108,6 +113,8 @@ module.exports = (Poll) ->
       catch e
         return res.status(400).json error: "Invalid option"
       
-      poll.save ->
+      poll.save (err, poll)->
+        if err
+          return res.status(400).json err
         res.json poll.options
     

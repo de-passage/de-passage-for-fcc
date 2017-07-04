@@ -114,34 +114,72 @@
       };
 
       Poll.deserialize = function(obj) {
-        var poll;
+        var i, j, len, len1, option, options, optionsRaw, poll, voter, voters, votersRaw;
+        console.log("Deserialize ", obj);
         poll = new Poll(obj.owner, obj.name, obj.description);
         if (obj._id != null) {
           poll.id = obj._id;
         }
-        if (obj.options != null) {
-          poll.options = obj.options;
+        optionsRaw = obj.options != null ? obj.options : [];
+        votersRaw = obj.voters != null ? obj.voters : [];
+        options = {};
+        voters = {};
+        for (i = 0, len = optionsRaw.length; i < len; i++) {
+          option = optionsRaw[i];
+          options[option.name] = option.details;
         }
-        if (obj.voters != null) {
-          poll.voters = obj.voters;
+        for (j = 0, len1 = votersRaw.length; j < len1; j++) {
+          voter = votersRaw[j];
+          voters[voter.name] = voter.vote;
         }
+        poll.options = options;
+        poll.voters = voters;
         poll.created_at = obj.created_at;
+        console.log("Deserialized ", poll);
         return poll;
       };
 
       Poll.prototype.serialize = function() {
-        var obj;
+        var key, obj, options, value, voters;
+        console.log("Serialize ", this);
+        voters = (function() {
+          var ref, results;
+          ref = this.voters;
+          results = [];
+          for (key in ref) {
+            value = ref[key];
+            results.push({
+              name: key,
+              vote: value
+            });
+          }
+          return results;
+        }).call(this);
+        options = (function() {
+          var ref, results;
+          ref = this.options;
+          results = [];
+          for (key in ref) {
+            value = ref[key];
+            results.push({
+              name: key,
+              details: value
+            });
+          }
+          return results;
+        }).call(this);
         obj = {
           owner: this.user,
           name: this.name,
           description: this.description,
-          options: this.options,
-          voters: this.voters,
+          options: options,
+          voters: voters,
           created_at: this.created_at || (new Date).getTime()
         };
         if (this.id != null) {
           obj._id = ObjectId(this.id);
         }
+        console.log("Serialized ", obj);
         return obj;
       };
 

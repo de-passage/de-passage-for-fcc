@@ -19,17 +19,8 @@ block content
               input.form-check-input(type="radio", name="option", required=true, value=option, checked= !i ? "checked" : false)
               | #{option}
   else
-    .poll-results
-      - var total = 0
-      each votes, option in poll.options
-        div.option-result
-          span.option-name #{option}
-          | : 
-          span.vote-count #{votes.count} 
-          | votes
-        - total += votes.count
-      div
-
+    include _chart.pug
+    pollChart(poll, user)
   .btn-group
     if !hasVoted
       button.btn.btn-primary#vote-btn(type="submit") Vote!
@@ -42,4 +33,5 @@ block content
 block scripts
   script(src="https://code.jquery.com/jquery-3.1.1.min.js")
   script(src="/scripts/vote.js")
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js")
 

@@ -45,7 +45,6 @@
           }
           u = serializeUser(req);
           hv = poll.hasVoted(u);
-          console.log(u, " > ", hv, "\n", poll.voters, "\n");
           return res.render("polls/show.pug", {
             poll: poll,
             user: req.user,
@@ -55,14 +54,20 @@
         });
       },
       create: function(req, res) {
-        var description, name, options, poll, ref;
+        var description, key, name, options, poll, ref, value;
         ref = req.body, name = ref.name, description = ref.description, options = ref.options;
         if (options != null) {
-          options = Array.slice.call(options).map(function(v) {
-            return {
-              description: v
-            };
-          });
+          options = (function() {
+            var results;
+            results = [];
+            for (key in options) {
+              value = options[key];
+              results.push({
+                description: value
+              });
+            }
+            return results;
+          })();
         }
         poll = new Poll(req.user.name, name, description, options);
         return poll.save(function(err, poll) {
@@ -177,9 +182,7 @@
       },
       vote: function(req, res) {
         var name, option, ref, user;
-        console.log(req.body);
         ref = req.body, name = ref.name, option = ref.option;
-        console.log(name, option);
         user = serializeUser(req);
         if (!((name != null) && (option != null))) {
           return res.status(400).json({
@@ -205,7 +208,7 @@
           } catch (_error) {
             e = _error;
             return res.status(400).json({
-              error: "Invalid option"
+              error: "Invalid option. " + e
             });
           }
           return poll.save(function(err, poll) {

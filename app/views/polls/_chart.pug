@@ -1,0 +1,14 @@
+mixin pollChart(poll)
+  .poll-results
+    - var total = 0
+    each votes, option in poll.options
+      .option-result
+        span.option-name #{option}
+        | : 
+        span.vote-count #{votes.count} 
+        | votes
+      - total += votes.count
+    .total-vote= total
+    
+    .chart-canvas
+      canvas.poll-chart

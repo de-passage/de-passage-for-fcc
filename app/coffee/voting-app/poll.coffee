@@ -81,21 +81,40 @@ instanciatePoll = (db, ObjectId) ->
       throw "This poll is not registered in the database" unless @id?
       db.remove _id: ObjectId @id
 
+    # Transform a JSON object into a Poll
     @deserialize: (obj) ->
       poll = new Poll obj.owner, obj.name, obj.description
       poll.id = obj._id if obj._id?
-      poll.options = obj.options if obj.options?
-      poll.voters = obj.voters if obj.voters?
+
+      optionsRaw = if obj.options? then obj.options else []
+      votersRaw = if obj.voters? then obj.voters else []
+      options = {}
+      voters = {}
+      for option in optionsRaw
+        options[option.name] = option.details
+
+      for voter in votersRaw
+        voters[voter.name] = voter.vote
+
+      poll.options = options
+      poll.voters = voters
       poll.created_at = obj.created_at
       poll
 
+    #Transform a poll into a JSON object
     serialize: () ->
+      voters =
+        (name: key, vote: value for key, value of  @voters)
+        
+      options =
+        (name: key, details: value for key, value of @options)
+
       obj =
         owner: @user
         name: @name
         description: @description
-        options: @options
-        voters: @voters
+        options: options
+        voters: voters
         created_at: @created_at || (new Date).getTime()
       obj._id = ObjectId(@id) if @id?
       obj

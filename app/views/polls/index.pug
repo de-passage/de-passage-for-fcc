@@ -6,11 +6,13 @@ block title
 block content
   .row
     .card-group
+      include _chart.pug
       each poll in polls
         .card.p-1
           .card-block
             h3.card-title
               a(href="/voting-app/poll/" + poll.name) #{poll.name}
+          pollChart(poll, user)
           .card-text #{poll.description}
           if user && (poll.user === user.name)
             form.btn-group.ml-auto(method="post", action="/voting-app/poll/" + poll.name + "?_method=DELETE")
@@ -23,3 +25,5 @@ block content
       .btn-group.mr-auto
         a.btn.btn-primary(href="/voting-app/polls/new") New poll
 
+block scripts
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js")

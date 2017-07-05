@@ -1,9 +1,11 @@
-.poll-results
+.poll-results.p-2
   each votes, option in poll.options
     .option-result
       span.option-name #{option}
       | : 
       span.vote-count #{votes.count} 
       | votes
+      span.vote-color(style="display: none") #{votes.color}
+      span.vote-border(style="display: none") #{votes.border}
   .chart-canvas
     canvas.poll-chart

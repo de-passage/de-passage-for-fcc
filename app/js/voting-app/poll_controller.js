@@ -70,8 +70,8 @@
               value = options[key];
               results.push({
                 description: value,
-                color: colors[key],
-                border: borders[key]
+                color: colors[key] || "#CCCCCC",
+                border: borders[key] || "#444444"
               });
             }
             return results;
@@ -121,18 +121,22 @@
         });
       },
       update: function(req, res) {
-        var borders, colors, description, name, options, ref;
-        ref = req.body, name = ref.name, description = ref.description, options = ref.options, colors = ref.colors, borders = ref.borders;
+        var borders, colors, description, name, options, ref, votes;
+        ref = req.body, name = ref.name, description = ref.description, options = ref.options, colors = ref.colors, borders = ref.borders, votes = ref.votes;
         if (colors == null) {
           colors = {};
         }
         if (borders == null) {
           borders = {};
         }
+        if (votes == null) {
+          votes = {};
+        }
+        console.log(req.body);
         return Poll.findOne({
           name: req.params.name
         }, function(err, poll) {
-          var i, len, option;
+          var i, key, len, newOptions, option, value;
           if (redirectOnDBError(err, "/voting-app/poll/" + (encodeURIComponent(req.params.name)), req, res)) {
             return;
           }
@@ -145,9 +149,21 @@
                 poll.description = description;
               }
               if (options != null) {
-                poll.replaceOptions(options, req.user.name);
+                newOptions = {};
+                for (key in options) {
+                  value = options[key];
+                  console.log("K/V: ", key, value);
+                  newOptions[key] = {
+                    description: value,
+                    count: votes[key] || 0,
+                    color: colors[key] || "#CCCCCC",
+                    border: borders[key] || "#444444"
+                  };
+                }
+                poll.replaceOptions(newOptions, req.user.name);
               } else {
                 poll.options = {};
+                poll.voters = {};
               }
             } else {
               req.flash("error", "You are not authorized to perform this action");

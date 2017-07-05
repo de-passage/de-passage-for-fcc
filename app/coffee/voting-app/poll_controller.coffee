@@ -34,7 +34,7 @@ module.exports = (Poll) ->
     colors ?= {}
     borders ?= {}
     if options?
-      options = (description: value, color: colors[key], border: borders[key] for key, value of options)
+      options = (description: value, color: colors[key] || "#CCCCCC", border: borders[key] || "#444444" for key, value of options)
     poll = new Poll(req.user.name, name, description, options)
     poll.save (err, poll) ->
       return if redirectOnDBError err, "/voting-app/polls/new", req, res
@@ -57,9 +57,12 @@ module.exports = (Poll) ->
       res.render "polls/index.pug", user: req.user, polls: polls, flash: req.flash()
 
   update: (req, res) ->
-    { name, description, options, colors, borders } = req.body
+    { name, description, options, colors, borders, votes } = req.body
     colors ?= {}
     borders ?= {}
+    votes ?= {}
+
+    console.log req.body
 
     Poll.findOne name: req.params.name, (err, poll) ->
       return if redirectOnDBError err, "/voting-app/poll/#{encodeURIComponent req.params.name}", req, res
@@ -69,9 +72,18 @@ module.exports = (Poll) ->
           poll.name = name if name?
           poll.description = description if description?
           if options?
-            poll.replaceOptions options, req.user.name
+            newOptions = {}
+            for key, value of options
+              console.log "K/V: ", key, value
+              newOptions[key] =
+                description: value
+                count: votes[key] || 0
+                color: colors[key] || "#CCCCCC"
+                border: borders[key] || "#444444"
+            poll.replaceOptions newOptions, req.user.name
           else
             poll.options = {}
+            poll.voters = {}
         else
           req.flash("error", "You are not authorized to perform this action")
           return res.redirect "/voting-app/poll/#{encodeURIComponent poll.name}"

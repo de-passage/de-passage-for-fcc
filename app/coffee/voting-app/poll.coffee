@@ -44,6 +44,8 @@ instanciatePoll = (db, ObjectId) ->
       newOption =
         user: user
         count: option.count || 0
+        color: option.color || "#CCCCCC"
+        border: option.border || "#444444"
       @options[name] = newOption
 
 
@@ -66,15 +68,13 @@ instanciatePoll = (db, ObjectId) ->
       Object.keys(@options).length
 
     replaceOptions: (newOptions, user) ->
-      oldOptions = @options
+      console.log "Replacing with ", newOptions
       @options = {}
       for key, value of newOptions
-        if oldOptions[key]?
-          @options[value] = oldOptions[key]
-        else
-          @addOption { description: value }, user
-
-
+        @addOption value, user
+      for name, vote of @voters
+        unless @options[vote]?
+          delete @voters[name]
 
     # Remove the poll from the database
     delete: ->

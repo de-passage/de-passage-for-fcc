@@ -7,7 +7,7 @@ block content
   .row
     .card-group
       each poll in polls
-        .card.p-1
+        .card.p-1(style="max-width: 300px")
           .card-block
             h3.card-title
               a(href="/voting-app/poll/" + poll.name) #{poll.name}

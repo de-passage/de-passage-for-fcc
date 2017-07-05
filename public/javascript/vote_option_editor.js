@@ -13,7 +13,7 @@
     optionInputDiv = $("#option-input");
     addOptionBtn = optionInputDiv.find("#add-option");
     listItems = optionInputDiv.find(".list-group-item");
-    count = listItems.length - 1;
+    count = listItems.length;
     listItems.each(function(index) {
       return $(this).find("button").click(removeOption(index));
     });

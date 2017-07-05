@@ -58,7 +58,9 @@
         }
         newOption = {
           user: user,
-          count: option.count || 0
+          count: option.count || 0,
+          color: option.color || "#CCCCCC",
+          border: option.border || "#444444"
         };
         return this.options[name] = newOption;
       };
@@ -79,7 +81,7 @@
       };
 
       Poll.prototype.hasVoted = function(username) {
-        return this.voters[username] !== null && typeof this.voters[username] !== "undefined";
+        return this.voters[username] != null;
       };
 
       Poll.prototype.optionCount = function() {
@@ -87,18 +89,21 @@
       };
 
       Poll.prototype.replaceOptions = function(newOptions, user) {
-        var key, oldOptions, results, value;
-        oldOptions = this.options;
+        var key, name, ref, results, value, vote;
+        console.log("Replacing with ", newOptions);
         this.options = {};
-        results = [];
         for (key in newOptions) {
           value = newOptions[key];
-          if (oldOptions[key] != null) {
-            results.push(this.options[value] = oldOptions[key]);
+          this.addOption(value, user);
+        }
+        ref = this.voters;
+        results = [];
+        for (name in ref) {
+          vote = ref[name];
+          if (this.options[vote] == null) {
+            results.push(delete this.voters[name]);
           } else {
-            results.push(this.addOption({
-              description: value
-            }, user));
+            results.push(void 0);
           }
         }
         return results;

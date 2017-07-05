@@ -4,34 +4,42 @@
     var charts;
     charts = $(".poll-results");
     return charts.each(function() {
-      var borders, chart, colors, ctx, options, pieChart, votes;
+      var borders, chart, colors, ctx, options, votes;
       chart = $(this);
       ctx = chart.find(".poll-chart")[0];
       options = [];
       votes = [];
       colors = [];
       borders = [];
-      chart.find(".option-result").each(function() {
-        var option;
+      return chart.find(".option-result").each(function() {
+        var count, option, pieChart;
         option = $(this);
         options.push(option.find(".option-name").html());
         votes.push(parseInt(option.find(".vote-count").html(), 10));
         colors.push(option.find(".vote-color").html());
         borders.push(option.find(".vote-border").html());
-        return option.hide();
-      });
-      return pieChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-          labels: options,
-          datasets: [
-            {
-              label: "# of votes",
-              data: votes,
-              backgroundColor: colors,
-              borderColor: borders
+        count = votes.reduce((function(acc, x) {
+          return acc += x;
+        }), 0);
+        console.log(count);
+        if (count) {
+          option.hide();
+          return pieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+              labels: options,
+              datasets: [
+                {
+                  label: "# of votes",
+                  data: votes,
+                  backgroundColor: colors,
+                  borderColor: borders
+                }
+              ]
             }
-          ]
+          });
+        } else {
+          return ctx.hide();
         }
       });
     });

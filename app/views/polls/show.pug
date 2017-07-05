@@ -22,14 +22,15 @@ block content
     include _chart.pug
       .chart-canvas
         canvas.poll-chart
-  .btn-group
-    if !hasVoted
-      button.btn.btn-primary#vote-btn(type="submit") Vote!
-    if user
-      button.btn.btn-secondary#add-option-btn(type="button") Add option
-      if(user.name == poll.user)
-        a.btn.btn-secondary(href="/voting-app/poll/" + poll.name + "/edit") Edit
-        a.btn.btn-danger(href="/voting-app/poll/" + poll.name + "?_method=DELETE") Delete
+  if !hasVoted
+    button.btn.btn-primary#vote-btn(type="submit") Vote!
+  form(action="/voting-app/poll/" + poll.name + "?_method=DELETE", method="POST")
+    .btn-group
+      if user
+        button.btn.btn-secondary#add-option-btn(type="button") Add option
+        if(user.name == poll.user)
+          a.btn.btn-secondary(href="/voting-app/poll/" + poll.name + "/edit") Edit
+          button.btn.btn-danger(type="submit") Delete
 
 block scripts
   script(src="https://code.jquery.com/jquery-3.1.1.min.js")

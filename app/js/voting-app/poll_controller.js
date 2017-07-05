@@ -54,8 +54,14 @@
         });
       },
       create: function(req, res) {
-        var description, key, name, options, poll, ref, value;
-        ref = req.body, name = ref.name, description = ref.description, options = ref.options;
+        var borders, colors, description, key, name, options, poll, ref, value;
+        ref = req.body, name = ref.name, description = ref.description, options = ref.options, colors = ref.colors, borders = ref.borders;
+        if (colors == null) {
+          colors = {};
+        }
+        if (borders == null) {
+          borders = {};
+        }
         if (options != null) {
           options = (function() {
             var results;
@@ -63,7 +69,9 @@
             for (key in options) {
               value = options[key];
               results.push({
-                description: value
+                description: value,
+                color: colors[key],
+                border: borders[key]
               });
             }
             return results;
@@ -113,8 +121,14 @@
         });
       },
       update: function(req, res) {
-        var description, name, options, ref;
-        ref = req.body, name = ref.name, description = ref.description, options = ref.options;
+        var borders, colors, description, name, options, ref;
+        ref = req.body, name = ref.name, description = ref.description, options = ref.options, colors = ref.colors, borders = ref.borders;
+        if (colors == null) {
+          colors = {};
+        }
+        if (borders == null) {
+          borders = {};
+        }
         return Poll.findOne({
           name: req.params.name
         }, function(err, poll) {
@@ -143,14 +157,10 @@
             if (Array.isArray(options)) {
               for (i = 0, len = options.length; i < len; i++) {
                 option = options[i];
-                poll.addOption({
-                  description: option
-                }, req.user.name);
+                poll.addOption(option, req.user.name);
               }
             } else {
-              poll.addOption({
-                description: options
-              }, req.user.name);
+              poll.addOption(options, req.user.name);
             }
           }
           return poll.save(function(err, poll) {

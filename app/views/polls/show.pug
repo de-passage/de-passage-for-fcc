@@ -20,7 +20,8 @@ block content
               | #{option}
   else
     include _chart.pug
-    pollChart(poll, user)
+      .chart-canvas
+        canvas.poll-chart
   .btn-group
     if !hasVoted
       button.btn.btn-primary#vote-btn(type="submit") Vote!
@@ -34,4 +35,5 @@ block scripts
   script(src="https://code.jquery.com/jquery-3.1.1.min.js")
   script(src="/scripts/vote.js")
   script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js")
+  script(src="/scripts/chart.js")
 

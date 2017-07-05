@@ -1,7 +1,7 @@
 mixin poll_form(poll, options)
   -
     var action = "/voting-app/poll/";
-    if(!poll) poll = {};
+    if(!poll) poll = { options: [] };
     if(options && options.method)
       action += poll.name + "?_method=" + options.method;
   form(method="post", action=action)
@@ -15,11 +15,27 @@ mixin poll_form(poll, options)
     .form-group#option-input
       label(for="option-list-group") Options
       ul.list-group#options-list-group
-        if option
+        if poll
           each option, i in Object.keys(poll.options)
             li.list-group-item(id="option-wrapper-" + i)
-              input.form-control(type="text", name="options['" + option + "']", value=option, required=true, style="width: 70%")
-              button.btn.btn-danger(type="button", id="delete-option-" + i) &times;
+              .container
+                .row
+                  .col-12.col-md-7
+                    input.form-control(type="text", name="options['" + option + "']", value=option, required=true)
+                  .col-12.col-md-5
+                    .row
+                      .col-8.col-lg-3
+                        label.form-check-label
+                          | Color
+                      .col-4.col-lg-2
+                        input.form-check-input(type="color", name="colors['" + option "']", value="#CCCCCC")
+                      .col-8.col-lg-3
+                        label.form-check-label
+                          | Border
+                      .col-4.col-lg-2
+                        input.form-check-input(type="color", name="borders['" + option "']", value="#333333")
+                      .col-2
+                        button.btn.btn-danger(type="button", id="delete-option-" + i) &times;
         li.list-group-item#add-option-li
           button(type="button", id="add-option") &plus;
     input.btn.btn-primary(type="submit", value="Save poll")

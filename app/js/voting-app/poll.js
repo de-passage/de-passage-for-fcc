@@ -79,7 +79,7 @@
       };
 
       Poll.prototype.hasVoted = function(username) {
-        return this.voters[username] != null;
+        return this.voters[username] !== null && typeof this.voters[username] !== "undefined";
       };
 
       Poll.prototype.optionCount = function() {
@@ -115,7 +115,6 @@
 
       Poll.deserialize = function(obj) {
         var i, j, len, len1, option, options, optionsRaw, poll, voter, voters, votersRaw;
-        console.log("Deserialize ", obj);
         poll = new Poll(obj.owner, obj.name, obj.description);
         if (obj._id != null) {
           poll.id = obj._id;
@@ -135,13 +134,11 @@
         poll.options = options;
         poll.voters = voters;
         poll.created_at = obj.created_at;
-        console.log("Deserialized ", poll);
         return poll;
       };
 
       Poll.prototype.serialize = function() {
         var key, obj, options, value, voters;
-        console.log("Serialize ", this);
         voters = (function() {
           var ref, results;
           ref = this.voters;
@@ -179,7 +176,6 @@
         if (this.id != null) {
           obj._id = ObjectId(this.id);
         }
-        console.log("Serialized ", obj);
         return obj;
       };
 

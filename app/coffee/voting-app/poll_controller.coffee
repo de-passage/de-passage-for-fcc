@@ -30,9 +30,11 @@ module.exports = (Poll) ->
       res.render "polls/show.pug", poll: poll, user: req.user, flash: req.flash(), hasVoted: hv
 
   create: (req, res) ->
-    { name, description, options } = req.body
+    { name, description, options, colors, borders } = req.body
+    colors ?= {}
+    borders ?= {}
     if options?
-      options = (description: value for key, value of options)
+      options = (description: value, color: colors[key], border: borders[key] for key, value of options)
     poll = new Poll(req.user.name, name, description, options)
     poll.save (err, poll) ->
       return if redirectOnDBError err, "/voting-app/polls/new", req, res
@@ -55,7 +57,9 @@ module.exports = (Poll) ->
       res.render "polls/index.pug", user: req.user, polls: polls, flash: req.flash()
 
   update: (req, res) ->
-    { name, description, options } = req.body
+    { name, description, options, colors, borders } = req.body
+    colors ?= {}
+    borders ?= {}
 
     Poll.findOne name: req.params.name, (err, poll) ->
       return if redirectOnDBError err, "/voting-app/poll/#{encodeURIComponent req.params.name}", req, res
@@ -74,9 +78,9 @@ module.exports = (Poll) ->
       else if options?
         if Array.isArray options
           for option in options
-            poll.addOption { description: option }, req.user.name
+            poll.addOption option, req.user.name
         else
-          poll.addOption { description: options }, req.user.name
+          poll.addOption options, req.user.name
 
       poll.save (err, poll) ->
         return if redirectOnDBError err, "/voting-app/poll/#{encodeURIComponent poll.name}/edit", req, res

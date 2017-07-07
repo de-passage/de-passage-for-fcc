@@ -62,8 +62,6 @@ module.exports = (Poll) ->
     borders ?= {}
     votes ?= {}
 
-    console.log req.body
-
     Poll.findOne name: req.params.name, (err, poll) ->
       return if redirectOnDBError err, "/voting-app/poll/#{encodeURIComponent req.params.name}", req, res
 
@@ -74,7 +72,6 @@ module.exports = (Poll) ->
           if options?
             newOptions = {}
             for key, value of options
-              console.log "K/V: ", key, value
               newOptions[key] =
                 description: value
                 count: votes[key] || 0

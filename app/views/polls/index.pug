@@ -25,5 +25,7 @@ block content
         a.btn.btn-primary(href="/voting-app/polls/new") New poll
 
 block scripts
-  script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js")
+  script(src="https://www.gstatic.com/charts/loader.js")
   script(src="/scripts/chart.js")
+  script
+    | window.hideChartLegend = true;

@@ -12,32 +12,30 @@ mixin poll_form(poll, options)
       label(for="description") Description
       textarea.form-control#description(name="description", placeholder="Optional description", required=true)
         | #{poll.description}
-    .form-group#option-input
-      label(for="option-list-group") Options
-      ul.list-group#options-list-group
-        if poll
-          each option, i in Object.keys(poll.options)
-            li.list-group-item(id="option-wrapper-" + i)
-              .container
-                .row
-                  .col-12.col-md-7
-                    input.form-control(type="text", name="options[" + option + "]", value=option, required=true)
-                    input(type="hidden", name="votes[" + option + "]", value=poll.options[option].count)
-                  .col-12.col-md-5
+    .row
+      .col-12.col-md-6
+        .form-group#option-input
+          label(for="option-list-group") Options
+          ul.list-group#options-list-group
+            if poll
+              each option, i in Object.keys(poll.options)
+                li.list-group-item.option-edition(id="option-wrapper-" + i)
+                  .container
                     .row
-                      .col-8.col-lg-3
-                        label.form-check-label
-                          | Color
-                      .col-4.col-lg-2
-                        input.form-check-input(type="color", name="colors[" + option + "]", value=poll.options[option].color)
-                      .col-8.col-lg-3
-                        label.form-check-label
-                          | Border
-                      .col-4.col-lg-2
-                        input.form-check-input(type="color", name="borders[" + option + "]", value=poll.options[option].border)
-                      .col-2
-                        button.btn.btn-danger(type="button", id="delete-option-" + i) &times;
-        li.list-group-item#add-option-li
-          button(type="button", id="add-option") &plus;
-    input.btn.btn-primary(type="submit", value="Save poll")
-
+                      .col-12.col-md-7
+                        input.form-control.option-name(type="text", name="options[" + option + "]", value=option, required=true)
+                        input(type="hidden", name="votes[" + option + "]", value=poll.options[option].count)
+                      .col-12.col-md-5
+                        .row
+                          .col-8.col-lg-6
+                            label.form-check-label
+                              | Color
+                          .col-4.col-lg-4
+                            input.form-check-input.option-color(type="color", name="colors[" + option + "]", value=poll.options[option].color)
+                          .col-2
+                            button.btn.btn-danger(type="button", id="delete-option-" + i) &times;
+            li.list-group-item#add-option-li
+              button(type="button", id="add-option") &plus;
+        input.btn.btn-primary(type="submit", value="Save poll")
+      .col-12.col-md-6
+        .chart-div

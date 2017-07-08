@@ -27,10 +27,32 @@ block content
   form(action="/voting-app/poll/" + poll.name + "?_method=DELETE", method="POST")
     .btn-group
       if user
-        button.btn.btn-secondary#add-option-btn(type="button") Add option
+        button.btn.btn-secondary#add-option-btn(type="button", data-toggle="modal", data-target="#add-option-modal") Add option
         if(user.name == poll.user)
           a.btn.btn-secondary(href="/voting-app/poll/" + poll.name + "/edit") Edit
           button.btn.btn-danger(type="submit") Delete
+  .modal.fade#add-option-modal(tabindex="-1", role="dialog", aria-labelledby="modalLabel", aria-hidden="true")
+    .modal-dialog(role="document")
+      .modal-content
+        .modal-header
+          h5.modal-title Add an option
+          button.close(type="button", data-dismiss="modal", aria-label="Close")
+            span(aria-hidden="true") &times;
+        .modal-body.p-3
+          form#add-option-form(method="post", action="/voting-app/polls/" + encodeURIComponent(poll.name) + "/options")
+            .form-group
+              .row
+                .col-12.col-md-6
+                  input.form-control(type="text", name="option", required=true, placeholder="Option")
+                .col-5.col-md-3.text-right
+                  label.form-control-label(for="add-option-label") Color
+                .col-7.col-md-3
+                  input.form-check-input#add-option-label(type="color", name="color")
+            .form-group
+              input.btn.btn-primary(type="submit", value="Submit")
+              button.btn.btn-secondary(type="button", data-dismiss="modal") Cancel
+
+
 
 block scripts
   script(src="https://code.jquery.com/jquery-3.1.1.min.js")

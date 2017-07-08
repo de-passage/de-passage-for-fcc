@@ -27,7 +27,7 @@ html(lang="en")
                     a.dropdown-item(href="/logout") Log out
             else
               li.nav-item
-                a.nav-link(href="/login") Log in
+                a.nav-link(href="/login" + (url ? "?redirect=" + url : "")) Log in!
               li
                 a.nav-link.btn.btn-primary.text-white(href="/signup") Sign up!
 

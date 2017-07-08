@@ -12,6 +12,7 @@ db_connection (db) ->
   imgsrch = require("./imgsrch/main.js") db
   Poll = require("./voting-app/poll.js") db.collection("polls"), require("mongodb").ObjectId
   voting = require("./voting-app/poll_controller.js")(Poll)
+  voting_options = require("./voting-app/option_controller.js")(Poll)
 
   # ########
   # Routes #
@@ -42,6 +43,7 @@ db_connection (db) ->
   app.post "/voting-app/poll", authentication.isAuthenticated,  voting.create
   app.delete "/voting-app/poll/:name", authentication.isAuthenticated,  voting.destroy
   app.post "/voting-app/polls/vote", voting.vote
+  app.post "/voting-app/polls/:name/options", authentication.isAuthenticated, voting_options.create
 
   # Authentication
   app.get "/login", (req, res) -> res.render "login.pug", flash: req.flash(), user: req.user, redirect: req.query.redirect

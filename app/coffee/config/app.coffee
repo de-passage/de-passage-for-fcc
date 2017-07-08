@@ -30,4 +30,10 @@ app.use flash()
 app.use '/styles', express.static path.join __dirname, '../../../public/styles'
 app.use '/scripts', express.static path.join __dirname, '../../../public/javascript'
 
+app.use (req, res, next) ->
+  if req.user?
+    res.locals.user = req.user
+  res.locals.url = encodeURIComponent req.url
+  next()
+
 module.exports = app

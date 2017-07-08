@@ -56,6 +56,14 @@
 
   app.use('/scripts', express["static"](path.join(__dirname, '../../../public/javascript')));
 
+  app.use(function(req, res, next) {
+    if (req.user != null) {
+      res.locals.user = req.user;
+    }
+    res.locals.url = encodeURIComponent(req.url);
+    return next();
+  });
+
   module.exports = app;
 
 }).call(this);

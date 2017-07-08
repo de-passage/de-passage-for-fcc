@@ -132,7 +132,6 @@
         if (votes == null) {
           votes = {};
         }
-        console.log(req.body);
         return Poll.findOne({
           name: req.params.name
         }, function(err, poll) {
@@ -152,7 +151,6 @@
                 newOptions = {};
                 for (key in options) {
                   value = options[key];
-                  console.log("K/V: ", key, value);
                   newOptions[key] = {
                     description: value,
                     count: votes[key] || 0,

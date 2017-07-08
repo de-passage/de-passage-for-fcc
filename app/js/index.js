@@ -13,11 +13,12 @@
   db_connection = require("./config/db.js");
 
   db_connection(function(db) {
-    var Poll, authentication, imgsrch, voting;
+    var Poll, authentication, imgsrch, voting, voting_options;
     authentication = require("./authentication.js")(db);
     imgsrch = require("./imgsrch/main.js")(db);
     Poll = require("./voting-app/poll.js")(db.collection("polls"), require("mongodb").ObjectId);
     voting = require("./voting-app/poll_controller.js")(Poll);
+    voting_options = require("./voting-app/option_controller.js")(Poll);
     app.get("/", function(req, res) {
       return res.render("index.pug");
     });
@@ -45,6 +46,7 @@
     app.post("/voting-app/poll", authentication.isAuthenticated, voting.create);
     app["delete"]("/voting-app/poll/:name", authentication.isAuthenticated, voting.destroy);
     app.post("/voting-app/polls/vote", voting.vote);
+    app.post("/voting-app/polls/:name/options", authentication.isAuthenticated, voting_options.create);
     app.get("/login", function(req, res) {
       return res.render("login.pug", {
         flash: req.flash(),

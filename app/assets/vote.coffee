@@ -27,6 +27,7 @@ $ ->
       error: (data) -> console.log JSON.stringify data
 
   $("#add-option-btn").click ->
+
   $("#show-form-btn").click ->
     $("#vote-form").show()
     $("#vote-display").hide()

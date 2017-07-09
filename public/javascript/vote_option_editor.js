@@ -25,7 +25,11 @@
     chart = new google.visualization.PieChart($(".chart-div").get(0));
     return chart.draw(data, {
       colors: colors,
-      height: $(".chart-div").width()
+      height: $(".chart-div").width(),
+      chartArea: {
+        height: '90%',
+        width: '90%'
+      }
     });
   };
 

@@ -21,7 +21,7 @@
           }
           if (!name) {
             req.flash("error", "Options need to be named");
-            return res.redirect("/voting-app/polls/" + poll.name);
+            return res.redirect("/voting-app/poll/" + poll.name);
           }
           try {
             poll.addOption({
@@ -29,12 +29,12 @@
               color: color
             }, req.user);
             return poll.save(function() {
-              return res.redirect("/voting-app/polls/" + poll.name);
+              return res.redirect("/voting-app/poll/" + poll.name);
             });
           } catch (_error) {
             e = _error;
             req.flash("error", e.message);
-            return res.redirect("/voting-app/polls/" + poll.name);
+            return res.redirect("/voting-app/poll/" + poll.name);
           }
         });
       }

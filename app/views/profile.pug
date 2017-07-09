@@ -5,8 +5,12 @@ block title
 
 block content
   p= user.email
-  - if(user.votes) {
-  p= user.votes
-  
-  - }
-  
+  h2 My polls
+  include polls/_chart_list.pug
+
+block scripts
+  script(src="https://www.gstatic.com/charts/loader.js")
+  script(src="/scripts/chart.js")
+  script
+    | window.hideChartLegend = true;
+    

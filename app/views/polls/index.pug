@@ -5,20 +5,7 @@ block title
 
 block content
   .row
-    .card-group
-      each poll in polls
-        .card.p-1(style="max-width: 300px")
-          .card-block
-            h3.card-title
-              a(href="/voting-app/poll/" + poll.name) #{poll.name}
-          include _chart.pug
-          .card-text #{poll.description}
-          if user && (poll.user === user.name)
-            form.btn-group.ml-auto(method="post", action="/voting-app/poll/" + poll.name + "?_method=DELETE")
-              a.btn.btn-secondary(href="/voting-app/poll/" + poll.name + "/edit") Edit
-              button.btn.btn-danger(type="submit") Delete
-      else
-        | No polls
+    include _chart_list.pug
   if user
     .row.mt-3
       .btn-group.mr-auto

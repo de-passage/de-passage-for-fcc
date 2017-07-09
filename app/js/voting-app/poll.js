@@ -219,6 +219,18 @@
         })(this));
       };
 
+      Poll.find = function(search, callback) {
+        return db.find(search).toArray((function(_this) {
+          return function(err, arr) {
+            if (err) {
+              return callback(err);
+            }
+            arr || (arr = []);
+            return callback(null, arr.map(_this.deserialize));
+          };
+        })(this));
+      };
+
       return Poll;
 
     })();

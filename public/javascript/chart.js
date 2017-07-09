@@ -6,13 +6,21 @@
     var chart, width;
     chart = new google.visualization.PieChart(container.find(".chart-div").get(0));
     width = container.width();
-    console.log(width);
     return chart.draw(data, {
-      height: container.width(),
-      width: container.width(),
+      height: Math.max(container.width(), 250),
+      width: Math.max(container.width(), 300),
       sliceVisibilityThreshold: 0,
       colors: colors,
-      legend: !window.hideChartLegend ? {} : 'none'
+      legend: !window.hideChartLegend ? null : 'none',
+      tooltip: {
+        textStyle: {
+          fontSize: 16
+        }
+      },
+      chartArea: {
+        width: '90%',
+        height: '90%'
+      }
     });
   };
 

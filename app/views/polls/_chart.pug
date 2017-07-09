@@ -1,4 +1,4 @@
-.poll-results.p-2
+.poll-results
   each votes, option in poll.options
     .option-result
       span.option-name #{option}
@@ -7,5 +7,5 @@
       | votes
       span.vote-color(style="display: none") #{votes.color}
       span.vote-border(style="display: none") #{votes.border}
-  .chart-div
+  .chart-div.m-2
 

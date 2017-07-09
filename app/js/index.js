@@ -66,9 +66,13 @@
     app.post("/signup", authentication.signup);
     app.get("/logout", authentication.logout);
     app.get("/profile", authentication.isAuthenticated, function(req, res) {
-      return res.render("profile.pug", {
-        user: req.user,
-        flash: req.flash
+      return Poll.find({
+        owner: req.user.name
+      }, function(err, polls) {
+        return res.render("profile.pug", {
+          flash: req.flash,
+          polls: polls
+        });
       });
     });
     app.listen(port);

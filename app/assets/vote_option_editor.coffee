@@ -15,7 +15,12 @@ previewChart = ->
     data.addRow [name, 1]
 
   chart = new google.visualization.PieChart($(".chart-div").get(0))
-  chart.draw data, colors: colors, height: $(".chart-div").width()
+  chart.draw data,
+    colors: colors
+    height: $(".chart-div").width()
+    chartArea:
+      height: '90%'
+      width: '90%'
 
 
 

@@ -138,5 +138,12 @@ instanciatePoll = (db, ObjectId) ->
         arr ||= []
         callback null, arr.map @deserialize
 
+    @find: (search, callback) ->
+      db.find(search).toArray (err, arr) =>
+        return callback err if err
+        arr ||= []
+        callback null, arr.map @deserialize
+        
+
 module.exports = instanciatePoll
 

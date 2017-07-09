@@ -55,7 +55,10 @@ db_connection (db) ->
   app.get "/logout", authentication.logout
 
   # User profile
-  app.get "/profile", authentication.isAuthenticated, (req, res) -> res.render "profile.pug", user: req.user, flash: req.flash
+  app.get "/profile", authentication.isAuthenticated, (req, res) ->
+    Poll.find owner: req.user.name, (err, polls) ->
+      res.render "profile.pug", flash: req.flash, polls: polls
+
 
 
   # Start the application

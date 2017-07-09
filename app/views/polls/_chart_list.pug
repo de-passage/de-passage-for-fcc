@@ -1,0 +1,14 @@
+.card-group
+  each poll in polls
+    .card
+      .card-block.m-2
+        h3.card-title
+          a(href="/voting-app/poll/" + poll.name) #{poll.name}
+      include _chart.pug
+      .card-text.m-3 #{poll.description}
+      if user && (poll.user === user.name)
+        form.btn-group.ml-auto(method="post", action="/voting-app/poll/" + poll.name + "?_method=DELETE")
+          a.btn.btn-secondary(href="/voting-app/poll/" + poll.name + "/edit") Edit
+          button.btn.btn-danger(type="submit") Delete
+  else
+    | No polls

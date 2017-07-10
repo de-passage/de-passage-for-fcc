@@ -49,7 +49,8 @@
             poll: poll,
             user: req.user,
             flash: req.flash(),
-            hasVoted: hv
+            hasVoted: hv,
+            url: req.protocol + "://" + req.get("host") + req.originalUrl
           });
         });
       },

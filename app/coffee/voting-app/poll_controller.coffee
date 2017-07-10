@@ -27,7 +27,7 @@ module.exports = (Poll) ->
       return if redirectUnlessFound poll, req.params.name, req, res
       u = serializeUser(req)
       hv = poll.hasVoted(u)
-      res.render "polls/show.pug", poll: poll, user: req.user, flash: req.flash(), hasVoted: hv
+      res.render "polls/show.pug", poll: poll, user: req.user, flash: req.flash(), hasVoted: hv, url: req.protocol + "://" + req.get("host") + req.originalUrl
 
   create: (req, res) ->
     { name, description, options, colors, borders } = req.body

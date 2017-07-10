@@ -4,13 +4,26 @@ block title
   | #{poll.name}
 
 block content
-  p
-    small A poll by 
-      strong #{poll.user}
-
   .row
     .col-12.col-md-6
+      p
+        small A poll by 
+          strong #{poll.user}
+      
+      div(style="line-height: 10px")
+        a.twitter-share-button.m-1(href="https://twitter.com/intent/tweet?text=" + encodeURIComponent(poll.name + " " + url), data-show-count="false") Tweet
+        .fb-share-button.m-1(data-href=encodeURIComponent(url), data-layout="button_count", data-size="small", data-mobile-iframe="true")
+
       p= poll.description
+
+      form(action="/voting-app/poll/" + poll.name + "?_method=DELETE", method="POST")
+        .btn-group
+          if user
+            button.btn.btn-secondary#add-option-btn(type="button", data-toggle="modal", data-target="#add-option-modal") Add option
+            if(user.name == poll.user)
+              a.btn.btn-secondary(href="/voting-app/poll/" + poll.name + "/edit") Edit
+              button.btn.btn-danger(type="submit") Delete
+
     .col-12.col-md-6
       form#vote-form(style= hasVoted ? "display: none;" : "")
         input(type="hidden", name="name", value=poll.name)
@@ -22,15 +35,9 @@ block content
                 | #{option}
         button.btn.btn-primary#vote-btn(type="submit") Vote!
       #vote-display(style= (hasVoted ? "" : "display: none;") + "width: 100%;")
+        button.btn.btn-secondary#show-form-btn(type="button") Change vote
         include _chart.pug
-        button.btn.btn-primary#show-form-btn(type="button") Change vote
-  form(action="/voting-app/poll/" + poll.name + "?_method=DELETE", method="POST")
-    .btn-group
-      if user
-        button.btn.btn-secondary#add-option-btn(type="button", data-toggle="modal", data-target="#add-option-modal") Add option
-        if(user.name == poll.user)
-          a.btn.btn-secondary(href="/voting-app/poll/" + poll.name + "/edit") Edit
-          button.btn.btn-danger(type="submit") Delete
+
   .modal.fade#add-option-modal(tabindex="-1", role="dialog", aria-labelledby="modalLabel", aria-hidden="true")
     .modal-dialog(role="document")
       .modal-content
@@ -59,3 +66,13 @@ block scripts
   script(src="/scripts/vote.js")
   script(src="https://www.gstatic.com/charts/loader.js")
   script(src="/scripts/chart.js")
+  script(async=true, src="//platform.twitter.com/widgets.js", charset="utf-8")
+  #fb-root
+  script
+    | (function(d, s, id) {
+    |   var js, fjs = d.getElementsByTagName(s)[0];
+    |   if (d.getElementById(id)) return;
+    |   js = d.createElement(s); js.id = id;
+    |   js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.9";
+    |   fjs.parentNode.insertBefore(js, fjs);
+    | }(document, 'script', 'facebook-jssdk'));

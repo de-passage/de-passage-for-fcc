@@ -9,8 +9,8 @@
     legend: if !window.hideChartLegend then null else 'none'
     tooltip: textStyle: fontSize: 16
     chartArea:
-      width: '99%'
-      height: '99%'
+      width: '95%'
+      height: '95%'
 
 showChart = (data) ->
   $(".poll-results").each ->

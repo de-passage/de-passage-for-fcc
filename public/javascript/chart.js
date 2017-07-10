@@ -18,8 +18,8 @@
         }
       },
       chartArea: {
-        width: '99%',
-        height: '99%'
+        width: '95%',
+        height: '95%'
       }
     });
   };

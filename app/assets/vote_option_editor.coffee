@@ -1,6 +1,8 @@
 removeOption = (i) ->
   ->
     $("#option-wrapper-#{i}").remove()
+    previewChart()
+
 
 previewChart = ->
   colors = []

@@ -2,15 +2,15 @@
   chart = new google.visualization.PieChart(container.find(".chart-div").get(0))
   width = container.width()
   chart.draw data,
-    height: Math.max(container.width(), 250)
+    height: Math.max(container.width() * .7, 250)
     width: Math.max(container.width(), 300)
     sliceVisibilityThreshold: 0
     colors: colors
     legend: if !window.hideChartLegend then null else 'none'
     tooltip: textStyle: fontSize: 16
     chartArea:
-      width: '90%'
-      height: '90%'
+      width: '99%'
+      height: '99%'
 
 showChart = (data) ->
   $(".poll-results").each ->

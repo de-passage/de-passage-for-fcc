@@ -4,7 +4,8 @@
 
   removeOption = function(i) {
     return function() {
-      return $("#option-wrapper-" + i).remove();
+      $("#option-wrapper-" + i).remove();
+      return previewChart();
     };
   };
 

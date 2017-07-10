@@ -10,7 +10,7 @@ block content
         small A poll by 
           strong #{poll.user}
       
-      div(style="line-height: 10px")
+      div.mb-3(style="line-height: 10px")
         a.twitter-share-button.m-1(href="https://twitter.com/intent/tweet?text=" + encodeURIComponent(poll.name + " " + url), data-show-count="false") Tweet
         .fb-share-button.m-1(data-href=encodeURIComponent(url), data-layout="button_count", data-size="small", data-mobile-iframe="true")
 
@@ -35,8 +35,8 @@ block content
                 | #{option}
         button.btn.btn-primary#vote-btn(type="submit") Vote!
       #vote-display(style= (hasVoted ? "" : "display: none;") + "width: 100%;")
-        button.btn.btn-secondary#show-form-btn(type="button") Change vote
         include _chart.pug
+        button.btn.btn-secondary#show-form-btn(type="button") Change vote
 
   .modal.fade#add-option-modal(tabindex="-1", role="dialog", aria-labelledby="modalLabel", aria-hidden="true")
     .modal-dialog(role="document")

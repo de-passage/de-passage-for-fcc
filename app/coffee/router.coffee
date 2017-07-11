@@ -37,6 +37,7 @@ module.exports =
       @routes.each (args) ->
         @addRoute args...
 
+    # Add every HTTP method to the prototype of router as an alias of addRoute
     for method in @HTTPMethods
       Router.prototype[method] = do (method) ->
         (alias, endpoint, middleware) ->
@@ -62,6 +63,3 @@ module.exports =
             pos++
           path = adapter(path, method) if adapter?
           path
-
-
-

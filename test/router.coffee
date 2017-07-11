@@ -65,3 +65,20 @@ describe "Router", ->
     router.scope("/scope").get("res", "/resource", ->)
     app.locals.path.res().should.equal "/scope/resource"
     sinon.assert.calledOnce(app.get)
+
+  it "should allow the definition of CRUD resources through the resource method", ->
+    Resource = {}
+    methods = ["show", "update", "index", "create", "edit", "new", "destroy"]
+    expectedPath = ["/resource/0", "/resource/0?_method=PUT", "/resource", "/resource", "/resource/0/edit", "/resource/new", "/resource/0?_method=DELETE"]
+    for verb in methods
+      Resource[verb] = ->
+    
+    router.resource("resource", Resource)
+
+    app.get.callCount.should.equal 4
+    app.post.callCount.should.equal 1
+    app.delete.callCount.should.equal 1
+    app.put.callCount.should.equal 1
+
+    for method, i in methods
+      app.locals.path[method + "_resource"](0).should.equal expectedPath[i]

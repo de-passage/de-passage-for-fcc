@@ -60,3 +60,8 @@ describe "Router", ->
       router[method](method + "_resource", route, ->)
       sinon.assert.calledOnce(app[method])
       app.locals.path[method + "_resource"].apply(null, params).should.equal customAdapter(result, method)
+
+  it "should prefix all routes when scoped", ->
+    router.scope("/scope").get("res", "/resource", ->)
+    app.locals.path.res().should.equal "/scope/resource"
+    sinon.assert.calledOnce(app.get)

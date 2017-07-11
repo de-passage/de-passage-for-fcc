@@ -12,11 +12,11 @@ module.exports =
       routes = [
         ["get", "new", "/#{name}/new"]
         ["post", "create", "/#{name}"]
-        ["get", "show", "/#{name}/:id"]
+        ["get", "show", "/#{name}/:#{name}_id"]
         ["get", "index", "/#{name}"]
-        ["get", "edit", "/#{name}/:id/edit"]
-        ["put", "update", "/#{name}/:id"]
-        ["delete", "destroy", "/#{name}/:id"]
+        ["get", "edit", "/#{name}/:#{name}_id/edit"]
+        ["put", "update", "/#{name}/:#{name}_id"]
+        ["delete", "destroy", "/#{name}/:#{name}_id"]
       ]
       for route in routes
         if typeof controller[route[1]] is "function"
@@ -24,7 +24,7 @@ module.exports =
 
     # Create a new route within the router and add it to the app if already provided
     addRoute: (alias, method, endpoint, middleware) ->
-      adapter = Router.adapt endpoint, method, @adapter
+      adapter = Router.adapt @prefix + endpoint, method, @adapter
       if @app?
         @app.locals.path ?= {}
         @app.locals.path[alias] = adapter
@@ -46,7 +46,7 @@ module.exports =
     scope: (prefix) ->
       if prefix.charAt(0) != "/"
         prefix = "/" + prefix
-      new Router(@app, @prefix + prefix)
+      new Router(@adapter, @app, @prefix + prefix)
 
 
     # Transform a route into a function adapting parameters into a path

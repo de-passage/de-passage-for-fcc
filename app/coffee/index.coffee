@@ -1,4 +1,8 @@
 app = require "./config/app.js"
+
+router = require "./config/router.coffee"
+router.use app
+
 port = process.env.PORT || 8080
 
 multer = require 'multer'

@@ -34,7 +34,7 @@ module.exports =
 
     # Add all existing and later routes to the express app given in parameters
     use: (@app) ->
-      @routes.each (args) ->
+      @routes.forEach (args) =>
         @addRoute args...
 
     # Add every HTTP method to the prototype of router as an alias of addRoute

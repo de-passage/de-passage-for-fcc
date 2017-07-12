@@ -7,6 +7,11 @@ sinon = require "sinon"
 describe "Router", ->
   router = null
   app = null
+  Resource = {}
+  methods = ["show", "update", "index", "create", "edit", "new", "destroy"]
+  for verb in methods
+    Resource[verb] = ->
+  expectedPath = ["/resource/0", "/resource/0?_method=PUT", "/resource", "/resource", "/resource/0/edit", "/resource/new", "/resource/0?_method=DELETE"]
 
   routes = [
     ["get", "/resource", [], "/resource"]
@@ -66,15 +71,7 @@ describe "Router", ->
     app.locals.path.res().should.equal "/scope/resource"
     sinon.assert.calledOnce(app.get)
 
-  it "should allow the definition of CRUD resources through the resource method", ->
-    Resource = {}
-    methods = ["show", "update", "index", "create", "edit", "new", "destroy"]
-    expectedPath = ["/resource/0", "/resource/0?_method=PUT", "/resource", "/resource", "/resource/0/edit", "/resource/new", "/resource/0?_method=DELETE"]
-    for verb in methods
-      Resource[verb] = ->
-    
-    router.resource("resource", Resource)
-
+  checkResource = ->
     app.get.callCount.should.equal 4
     app.post.callCount.should.equal 1
     app.delete.callCount.should.equal 1
@@ -82,3 +79,23 @@ describe "Router", ->
 
     for method, i in methods
       app.locals.path[method + "_resource"](0).should.equal expectedPath[i]
+
+  it "should allow the definition of CRUD resources through the resource method", ->
+    router.resource("resource", Resource)
+    checkResource()
+
+
+  it "should add the registered routes to the app on use", ->
+    router = new Router customAdapter
+    router.resource "resource", Resource
+    router.use app
+
+    checkResource()
+
+  it "should allow to add new routes to the app after use", ->
+    router = new Router customAdapter
+    router.use app
+    router.resource "resource", Resource
+
+    checkResource()
+

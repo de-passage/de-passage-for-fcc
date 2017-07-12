@@ -48,11 +48,12 @@ describe "Poll controller", ->
 
   it "should render the individual view on show", ->
     req.params = { name: "poll1" }
+    req.get = ->
     pollController.show(req, res)
 
     sinon.assert.calledOnce res.render
     poll = polls[0]
-    sinon.assert.calledWith res.render, "polls/show.pug", user: req.user, poll: Poll.deserialize(poll), flash: req.flash(), hasVoted: false
+    sinon.assert.calledWith res.render, "polls/show.pug", user: req.user, poll: Poll.deserialize(poll), flash: req.flash(), hasVoted: false, url:"undefined://undefinedundefined"
 
   it "should render the individual edition view on edit", ->
     req.params = { name: "poll1" }

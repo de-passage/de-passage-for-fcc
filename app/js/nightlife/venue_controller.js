@@ -2,7 +2,12 @@
 (function() {
   module.exports = function(User) {
     return {
-      show: function(res, req) {}
+      show: function(req, res) {
+        return res.render("venues/show.pug");
+      },
+      index: function(req, res) {
+        return res.render("venues/index.pug");
+      }
     };
   };
 

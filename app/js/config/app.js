@@ -64,6 +64,20 @@
     return next();
   });
 
+  app.use(function(req, res, next) {
+    var f, render;
+    render = res.render;
+    f = req.flash();
+    res.render = function(view, options) {
+      if (options == null) {
+        options = {};
+      }
+      options.flash = f;
+      return render.call(res, view, options);
+    };
+    return next();
+  });
+
   module.exports = app;
 
 }).call(this);

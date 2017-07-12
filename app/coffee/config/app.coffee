@@ -36,4 +36,13 @@ app.use (req, res, next) ->
   res.locals.url = encodeURIComponent req.url
   next()
 
+app.use (req, res, next) ->
+  render = res.render
+  f = req.flash()
+  res.render = (view, options) ->
+    options ?= {}
+    options.flash = f
+    render.call res, view, options
+  next()
+
 module.exports = app

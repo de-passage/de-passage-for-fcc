@@ -54,9 +54,11 @@
 
     Router.prototype.use = function(app) {
       this.app = app;
-      return this.routes.each(function(args) {
-        return this.addRoute.apply(this, args);
-      });
+      return this.routes.forEach((function(_this) {
+        return function(args) {
+          return _this.addRoute.apply(_this, args);
+        };
+      })(this));
     };
 
     ref = Router.HTTPMethods;
@@ -80,13 +82,16 @@
       var count, tokens;
       tokens = endpoint.split(/:[^\/]+/);
       count = tokens.length - 1;
+      if (count < 0) {
+        count = 0;
+      }
       return (function(tokens, count) {
         return function() {
           var args, path, pos;
           args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
           path = tokens[0];
           pos = 0;
-          while (count--) {
+          while (count-- > 0) {
             path += args[pos] + tokens[pos + 1];
             pos++;
           }

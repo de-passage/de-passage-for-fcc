@@ -1,4 +1,4 @@
-Router = require "../router.coffee"
+Router = require "../router.js"
 
 router =
   new Router (path, method) ->

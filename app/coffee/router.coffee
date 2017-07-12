@@ -54,11 +54,12 @@ module.exports =
     @adapt = (endpoint, method, adapter) ->
       tokens = endpoint.split(/:[^/]+/)
       count = tokens.length - 1
+      count = 0 if count < 0
       do (tokens, count) ->
         (args...) ->
           path = tokens[0]
           pos = 0
-          while count--
+          while count-- > 0
             path += args[pos] + tokens[pos + 1]
             pos++
           path = adapter(path, method) if adapter?

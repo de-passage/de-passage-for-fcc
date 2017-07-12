@@ -47,8 +47,6 @@
           hv = poll.hasVoted(u);
           return res.render("polls/show.pug", {
             poll: poll,
-            user: req.user,
-            flash: req.flash(),
             hasVoted: hv,
             url: req.protocol + "://" + req.get("host") + req.originalUrl
           });
@@ -87,10 +85,7 @@
         });
       },
       "new": function(req, res) {
-        return res.render("polls/new.pug", {
-          user: req.user,
-          flash: req.flash()
-        });
+        return res.render("polls/new.pug");
       },
       edit: function(req, res) {
         return Poll.findOne({
@@ -103,9 +98,7 @@
             return;
           }
           return res.render("polls/edit.pug", {
-            user: req.user,
-            poll: poll,
-            flash: req.flash()
+            poll: poll
           });
         });
       },
@@ -115,9 +108,7 @@
             return;
           }
           return res.render("polls/index.pug", {
-            user: req.user,
-            polls: polls,
-            flash: req.flash()
+            polls: polls
           });
         });
       },

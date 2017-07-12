@@ -27,7 +27,7 @@ module.exports = (Poll) ->
       return if redirectUnlessFound poll, req.params.name, req, res
       u = serializeUser(req)
       hv = poll.hasVoted(u)
-      res.render "polls/show.pug", poll: poll, user: req.user, flash: req.flash(), hasVoted: hv, url: req.protocol + "://" + req.get("host") + req.originalUrl
+      res.render "polls/show.pug", poll: poll, hasVoted: hv, url: req.protocol + "://" + req.get("host") + req.originalUrl
 
   create: (req, res) ->
     { name, description, options, colors, borders } = req.body
@@ -42,19 +42,19 @@ module.exports = (Poll) ->
       res.redirect "/voting-app/poll/#{encodeURIComponent poll.name}"
 
   new: (req, res) ->
-    res.render "polls/new.pug", user: req.user, flash: req.flash()
+    res.render "polls/new.pug"
 
   edit: (req, res) ->
     Poll.findOne name: req.params.name, (err, poll) ->
       return if redirectOnDBError err, "/voting-app/poll/#{encodeURIComponent poll.name}", req, res
       return if redirectUnlessFound poll, req.params.name, req, res
 
-      res.render "polls/edit.pug", user: req.user, poll: poll, flash: req.flash()
+      res.render "polls/edit.pug", poll: poll
 
   index: (req, res) ->
     Poll.all (err, polls) ->
       return if redirectOnDBError err, "/", req, res
-      res.render "polls/index.pug", user: req.user, polls: polls, flash: req.flash()
+      res.render "polls/index.pug", polls: polls
 
   update: (req, res) ->
     { name, description, options, colors, borders, votes } = req.body

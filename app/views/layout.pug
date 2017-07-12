@@ -39,6 +39,8 @@ html(lang="en")
         block title
 
       -
+        if(typeof flash == "undefined" || flash === null)
+          flash = {};
         var errors = flash["error"];
         var alerts = flash["alert"];
         var infos = flash["info"];

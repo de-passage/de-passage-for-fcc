@@ -53,11 +53,9 @@
     app["delete"]("/voting-app/poll/:name", authentication.isAuthenticated, voting.destroy);
     app.post("/voting-app/polls/vote", voting.vote);
     app.post("/voting-app/polls/:name/options", authentication.isAuthenticated, voting_options.create);
-    router.resource("venues", venue_controller);
+    router.scope("nightlife").resource("venues", venue_controller);
     app.get("/login", function(req, res) {
       return res.render("login.pug", {
-        flash: req.flash(),
-        user: req.user,
         redirect: req.query.redirect
       });
     });
@@ -65,10 +63,7 @@
       return res.redirect(req.body.redirect ? req.body.redirect : "/profile");
     });
     app.get("/signup", function(req, res) {
-      return res.render("signup.pug", {
-        flash: req.flash(),
-        user: req.user
-      });
+      return res.render("signup.pug");
     });
     app.post("/signup", authentication.signup);
     app.get("/logout", authentication.logout);
@@ -77,7 +72,6 @@
         owner: req.user.name
       }, function(err, polls) {
         return res.render("profile.pug", {
-          flash: req.flash,
           polls: polls
         });
       });

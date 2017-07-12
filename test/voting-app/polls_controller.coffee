@@ -32,7 +32,6 @@ describe "Poll controller", ->
       user:
         new User "user1", "email"
       flash: ->
-        []
 
   afterEach ->
     database.restore()
@@ -44,7 +43,7 @@ describe "Poll controller", ->
     pollController.index(req, res)
 
     sinon.assert.calledOnce res.render
-    sinon.assert.calledWith res.render, "polls/index.pug", user: req.user, polls: polls.map(Poll.deserialize), flash: req.flash()
+    sinon.assert.calledWith res.render, "polls/index.pug", polls: polls.map(Poll.deserialize)
 
   it "should render the individual view on show", ->
     req.params = { name: "poll1" }
@@ -53,7 +52,7 @@ describe "Poll controller", ->
 
     sinon.assert.calledOnce res.render
     poll = polls[0]
-    sinon.assert.calledWith res.render, "polls/show.pug", user: req.user, poll: Poll.deserialize(poll), flash: req.flash(), hasVoted: false, url:"undefined://undefinedundefined"
+    sinon.assert.calledWith res.render, "polls/show.pug", poll: Poll.deserialize(poll), hasVoted: false, url:"undefined://undefinedundefined"
 
   it "should render the individual edition view on edit", ->
     req.params = { name: "poll1" }
@@ -61,14 +60,14 @@ describe "Poll controller", ->
 
     sinon.assert.calledOnce res.render
     poll = polls[0]
-    sinon.assert.calledWith res.render, "polls/edit.pug", user: req.user, poll: Poll.deserialize(poll), flash: req.flash()
+    sinon.assert.calledWith res.render, "polls/edit.pug", poll: Poll.deserialize(poll)
 
   it "should render the creation view on new", ->
     req.body = { name: "poll1" }
     pollController.new(req, res)
 
     sinon.assert.calledOnce res.render
-    sinon.assert.calledWith res.render, "polls/new.pug", user: req.user, flash: req.flash()
+    sinon.assert.calledWith res.render, "polls/new.pug"
 
   it "should add a poll to the database on create", ->
     req.body = { name: "poll1", description: "desc1" }
@@ -77,7 +76,7 @@ describe "Poll controller", ->
     assert(db.values.length == expectedLength, "Expected #{expectedLength} elements in the database, but had #{db.values.length})")
 
   it "should redirect to the individual show page after create", ->
-    req = body: {name: "poll1"}, user: new User("user1", "email")
+    req = Object.assign req, body: {name: "poll1"}
     pollController.create(req, res)
 
     sinon.assert.calledOnce(res.redirect)
@@ -91,7 +90,7 @@ describe "Poll controller", ->
     database.verify()
 
   it "should redirect to the individual show page after update", ->
-    req = params: {name: "poll1"}, user: new User("user1", "email"), body: {}
+    req = params: {name: "poll1"}, body: {}
     pollController.update(req, res)
     sinon.assert.calledOnce(res.redirect)
     sinon.assert.calledWith(res.redirect, "/voting-app/poll/poll1")
@@ -104,7 +103,6 @@ describe "Poll controller", ->
 
   it "should redirect to the index page on destroy", ->
     req.params =  {name: "poll1"}
-    req.user = new User("user1", "email")
     pollController.destroy(req, res)
     sinon.assert.calledOnce(res.redirect)
     sinon.assert.calledWith(res.redirect, "/voting-app/polls")

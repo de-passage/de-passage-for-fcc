@@ -52,13 +52,13 @@ db_connection (db) ->
   app.post "/voting-app/polls/:name/options", authentication.isAuthenticated, voting_options.create
 
   # Nightlife oordinator
-  router.resource "venues", venue_controller
+  router.scope("nightlife").resource "venues", venue_controller
 
   # Authentication
-  app.get "/login", (req, res) -> res.render "login.pug", flash: req.flash(), user: req.user, redirect: req.query.redirect
+  app.get "/login", (req, res) -> res.render "login.pug", redirect: req.query.redirect
   app.post "/login", authentication.login, (req, res) -> res.redirect if req.body.redirect then req.body.redirect else "/profile"
 
-  app.get "/signup", (req, res) -> res.render "signup.pug", flash: req.flash(), user: req.user
+  app.get "/signup", (req, res) -> res.render "signup.pug"
   app.post "/signup", authentication.signup
 
   app.get "/logout", authentication.logout
@@ -66,7 +66,7 @@ db_connection (db) ->
   # User profile
   app.get "/profile", authentication.isAuthenticated, (req, res) ->
     Poll.find owner: req.user.name, (err, polls) ->
-      res.render "profile.pug", flash: req.flash, polls: polls
+      res.render "profile.pug", polls: polls
 
 
 

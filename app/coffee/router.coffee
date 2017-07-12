@@ -23,14 +23,14 @@ module.exports =
           @addRoute "#{route[1]}_#{name}", route[0], route[2], controller[route[1]]
 
     # Create a new route within the router and add it to the app if already provided
-    addRoute: (alias, method, endpoint, middleware) ->
+    addRoute: (alias, method, endpoint, middlewares...) ->
       adapter = Router.adapt @prefix + endpoint, method, @adapter
       if @app?
         @app.locals.path ?= {}
         @app.locals.path[alias] = adapter
-        @app[method](@prefix + endpoint, middleware)
+        @app[method](@prefix + endpoint, middlewares...)
       else
-        @routes.push [alias, method, endpoint, adapter, middleware]
+        @routes.push [alias, method, endpoint, adapter, middlewares...]
 
     # Add all existing and later routes to the express app given in parameters
     use: (@app) ->

@@ -36,6 +36,9 @@ app.use (req, res, next) ->
   res.locals.url = encodeURIComponent req.url
   next()
 
+# app.use(flash({ locals: 'flash' })) should be the way to go but
+# it didn't seem to fit the current code and the following was
+# readily available
 app.use (req, res, next) ->
   render = res.render
   f = req.flash()

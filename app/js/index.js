@@ -77,7 +77,8 @@
       });
     });
     app.listen(port);
-    return console.log("Listening to port " + port);
+    console.log("Listening to port " + port);
+    return console.log("Paths: ", app.locals.path);
   });
 
 }).call(this);

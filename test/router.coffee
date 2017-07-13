@@ -99,3 +99,130 @@ describe "Router", ->
 
     checkResource()
 
+
+  [ "before", "after" ].forEach (e) ->
+    C =
+      "#{e}": sinon.spy()
+      show: sinon.spy()
+      update: sinon.spy()
+    get_f = []
+    put_f = []
+    ap =
+      locals: {}
+      get: (route, callbacks...) ->
+        get_f = callbacks
+      put: (route, callbacks...) ->
+        put_f = callbacks
+    f1 = sinon.spy()
+    f2 = sinon.spy()
+
+    it "should allow controllers to have a #{e} callback", ->
+      router = new Router customAdapter, ap
+      router.resource "resource", C
+      get_f.length.should.equal 2
+      put_f.length.should.equal 2
+      for f in get_f
+        f()
+
+      if e == "after"
+        sinon.assert.callOrder C.show, C.after
+      else
+        sinon.assert.callOrder C.before, C.show
+
+
+    it "should allow controllers to have multiple #{e} callbacks", ->
+      C[e] = [ f1, f2 ]
+      router = new Router customAdapter, ap
+      router.resource "", C
+
+      get_f.length.should.equal 3
+      put_f.length.should.equal 3
+      for f in get_f
+        f()
+      if e == "after"
+        sinon.assert.callOrder C.show, C.after...
+      else
+        sinon.assert.callOrder C.before..., C.show
+
+    it "should allow a #{e} callback to have a `only` property defining #{e} which function the callbacks should be called", ->
+
+      C[e] =
+        use: f1
+        only: ["show"]
+
+      router = new Router customAdapter, ap
+      router.resource "", C
+
+      get_f.length.should.equal 2
+      put_f.length.should.equal 1
+      for f in get_f
+        f()
+      if e == "after"
+        sinon.assert.callOrder C.show, f1
+      else
+        sinon.assert.callOrder f1, C.show
+
+      for f in put_f
+        f()
+      if e == "after"
+        sinon.assert.callOrder C.update
+      else
+        sinon.assert.callOrder C.update
+
+      f1.reset()
+
+    it "should allow a #{e} callback to have a `except` property defining #{e} which function the callbacks should not be called", ->
+      C[e] =
+        use: [f1, f2]
+        except: ["show"]
+
+      router = new Router customAdapter, ap
+      router.resource "", C
+
+      get_f.length.should.equal 1
+      put_f.length.should.equal 3
+      for f in get_f
+        f()
+      if e == "after"
+        sinon.assert.callOrder C.show
+      else
+        sinon.assert.callOrder C.show
+      for f in put_f
+        f()
+      if e == "after"
+        sinon.assert.callOrder C.update, f1, f2
+      else
+        sinon.assert.callOrder f1, f2, C.update
+      f1.reset()
+      f2.reset()
+
+    it "should allow #{e} callbacks to have different only/except properties", ->
+      C[e] = [
+        {
+          use: f1
+          only: "show"
+        },
+        {
+          use: f2
+          except: "show"
+        }
+      ]
+
+      router = new Router customAdapter, ap
+      router.resource "", C
+      get_f.length.should.equal 2
+      put_f.length.should.equal 2
+      for f in get_f
+        f()
+      if e == "after"
+        sinon.assert.callOrder C.show, f1
+      else
+        sinon.assert.callOrder f1, C.show
+      for f in put_f
+        f()
+      if e == "after"
+        sinon.assert.callOrder C.update, f2
+      else
+        sinon.assert.callOrder f2, C.update
+      f1.reset()
+      f2.reset()

@@ -73,3 +73,4 @@ db_connection (db) ->
   # Start the application
   app.listen port
   console.log "Listening to port #{port}"
+  console.log "Paths: ", app.locals.path

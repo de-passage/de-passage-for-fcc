@@ -1,3 +1,40 @@
+_extract = (data) ->
+  if Array.isArray data
+    (_extract d for d in data)
+  else if typeof data is "function"
+    { use: [data], except: [] }
+  else unless data?
+    []
+  else
+    if data.use?
+      unless Array.isArray data.use
+        data.use = [data.use]
+    else
+      data.use = []
+    unless data.only? or data.except?
+      data.except = []
+    data
+
+extract = (data) ->
+  d = _extract data
+  if Array.isArray d
+    d
+  else
+    [d]
+
+filter = (array, verb) ->
+  r = []
+  for data in array
+    if data.only? and not Array.isArray data.only
+      data.only = [data.only]
+    if data.except? and not Array.isArray data.except
+      data.except = [data.except]
+    unless (data.only? and verb not in data.only) or (data.except? and verb in data.except)
+      r.push data.use...
+  r
+
+
+
 module.exports =
   class Router
     @HTTPMethods = [ "get", "post", "patch", "put", "delete", "head", "options", "trace", "connect", "propfind", "proppatch", "mkcol", "copy", "move", "lock", "unlock", "versionControl", "report", "checkout", "checkin", "uncheckout", "mkworkspace", "update", "label", "merge", "baselineControl", "mkactivity", "orderpatch", "acl", "search" ]
@@ -18,9 +55,15 @@ module.exports =
         ["put", "update", "/#{name}/:#{name}_id"]
         ["delete", "destroy", "/#{name}/:#{name}_id"]
       ]
+
+      before = extract controller.before
+      after = extract controller.after
+
       for route in routes
         if typeof controller[route[1]] is "function"
-          @addRoute "#{route[1]}_#{name}", route[0], route[2], controller[route[1]]
+          b = filter before, route[1]
+          a = filter after, route[1]
+          @addRoute "#{route[1]}_#{name}", route[0], route[2], b..., controller[route[1]], a...
 
     # Create a new route within the router and add it to the app if already provided
     addRoute: (alias, method, endpoint, middlewares...) ->
@@ -40,8 +83,8 @@ module.exports =
     # Add every HTTP method to the prototype of router as an alias of addRoute
     for method in @HTTPMethods
       Router.prototype[method] = do (method) ->
-        (alias, endpoint, middleware) ->
-          @addRoute alias, method, endpoint, middleware
+        (alias, endpoint, middlewares...) ->
+          @addRoute alias, method, endpoint, middlewares...
 
     # Return a sub router
     scope: (prefix) ->

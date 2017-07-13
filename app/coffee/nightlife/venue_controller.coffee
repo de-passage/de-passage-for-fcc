@@ -1,10 +1,13 @@
+yelpAuthentication = (req, res, next) ->
+  next()
+
 module.exports = (User) ->
-    beforeEach: (req, res) ->
+  before: [
+    yelpAuthentication
+  ]
 
-	show: (req, res) ->
-      res.render("venues/show.pug")
+  show: (req, res) ->
+    res.render("venues/show.pug")
 
-    index: (req, res) ->
-      res.render("venues/index.pug")
-
-
+  index: (req, res) ->
+    res.render("venues/index.pug")

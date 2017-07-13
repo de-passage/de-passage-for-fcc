@@ -7,6 +7,8 @@ passport = require "passport"
 flash = require "connect-flash"
 methodOverride = require "method-override"
 morgan = require "morgan"
+yelp = require "./.yelp_auth.js"
+yelp()
 
 app = express()
 

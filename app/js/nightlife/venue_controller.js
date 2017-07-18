@@ -14,10 +14,11 @@
         return res.render("venues/show.pug");
       },
       index: function(req, res) {
-        var i, latitude, len, location, longitude, param, params, ref, ref1, type, url, view;
+        var i, latitude, len, location, longitude, param, params, path, ref, ref1, token, type, url, view;
         ref = req.query, type = ref.type, longitude = ref.longitude, latitude = ref.latitude, location = ref.location;
         view = "venues/index.pug";
         if (((longitude != null) && (latitude != null)) || (location != null)) {
+          console.log("here");
           params = [];
           ref1 = ["longitude", "latitude", "location"];
           for (i = 0, len = ref1.length; i < len; i++) {
@@ -26,11 +27,19 @@
               params.push(param + "=" + req.query[param]);
             }
           }
-          url = "https://api.yelp.com/v3/businesses/search";
-          if (params.length > 0) {
-            url += "?" + params.join("&");
-          }
-          return https.get(url, function(resp) {
+          url = "api.yelp.com";
+          path = "/v3/businesses/search?" + params.join("&");
+          token = cache.get("yelp_token");
+          console.log("Fetching ", url, path);
+          console.log("token: ", token);
+          return https.get({
+            host: url,
+            path: path,
+            headers: {
+              "Authorization": "Bearer " + token
+            },
+            port: process.env.PORT
+          }, function(resp) {
             var rawData;
             rawData = "";
             resp.on("data", function(chunk) {
@@ -38,6 +47,7 @@
             });
             resp.on("end", function() {
               var e, parsedData;
+              console.log(rawData);
               try {
                 parsedData = JSON.parse(rawData);
                 if (type === "json") {

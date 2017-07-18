@@ -22,7 +22,6 @@ authenticate = ->
       res.setEncoding("utf-8")
       res.on "data", (chunk) ->
         ret = JSON.parse chunk
-        console.log ret.expires_in * 1000
         console.log "Fetched new yelp authentication token. Expires in #{ret.expires_in} seconds"
         cache.put("yelp_token", ret.access_token, Math.min(ret.expires_in * 1000, 2147483647), authenticate)
 

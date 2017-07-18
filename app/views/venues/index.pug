@@ -4,4 +4,10 @@ block title
   | Venues
 
 block content
-  p Yelp venues here
+  p Near you:
+  #venues
+
+block scripts
+  script(src="/scripts/yelp.js")
+  script(type="text/javascript")
+    | window.yelpData = !{ yelpData ? JSON.stringify(yelpData) : "null"};

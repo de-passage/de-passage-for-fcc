@@ -5,9 +5,34 @@ block title
 
 block content
   p Near you:
-  #venues
+  ul.list-group#venue-list(v-if=items)
+    li.list-group-item(v-for="item in items") 
+      .row(style="width: 100%")
+        .col-2
+          img.img-fluid(:src="item.image_url", style="max-width: 100%")
+        .col-10
+          h3 {{ item.name }}
+          .row
+            .col-3 {{ item.rating }} stars
+            .col-3 {{ item.review_count }} reviews
+            .col-3
+              span(v-if="item.is_closed") Closed
+              span(v-else=true) Open
+          template(v-if="item.shown")
+            p {{ item.location.display_address.join(", ") }}
+            p Phone{{ item.display_phone }}
+            a(href="item.url", target="_blank") Yelp page
+            ul.list-group
+              li.list-group-item(v-for="i in items.categories")
+                | {{ i.title }}
+            button.btn.btn-secondary(type="button", @click="toggle(item)") Less
+          template(v-else=true)
+            button.btn.btn-secondary(type="button", v-on:click="toggle(item)") More
+
+
 
 block scripts
-  script(src="/scripts/yelp.js")
+  script(src="https://unpkg.com/vue")
   script(type="text/javascript")
     | window.yelpData = !{ yelpData ? JSON.stringify(yelpData) : "null"};
+  script(src="/scripts/yelp.js")

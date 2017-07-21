@@ -9,10 +9,14 @@
   instanciateUser = function(db) {
     var User;
     return User = (function() {
-      function User(name, email, password1) {
+      function User(name, email, password1, visit) {
         this.name = name;
         this.email = email;
         this.password = password1;
+        this.visit = visit;
+        if (this.visit == null) {
+          this.visit = {};
+        }
       }
 
       User.prototype.verifyPassword = function(password) {
@@ -28,7 +32,8 @@
           _id: this.id ? ObjectId(this.id) : void 0,
           username: this.name,
           email: this.email,
-          password: this.password
+          password: this.password,
+          visit: this.visit
         }, (function(_this) {
           return function(err, obj) {
             if (err) {
@@ -48,10 +53,41 @@
           }
           user = false;
           if (result != null) {
-            user = new User(result.username, result.email, result.password);
+            user = new User(result.username, result.email, result.password, result.visit);
             user.id = result._id;
           }
           return callback(null, user);
+        });
+      };
+
+      User.aggregateVisits = function(venues) {
+        return new Promise(function(resolve, reject) {
+          return db.find({
+            visit: {
+              $in: venues
+            }
+          }, {
+            visit: 1,
+            name: 1
+          }).toArray(function(err, arr) {
+            var e, i, j, len, len1, res, venue;
+            if (err) {
+              return reject(err);
+            }
+            if (!arr) {
+              return resolve([]);
+            }
+            res = {};
+            for (i = 0, len = venues.length; i < len; i++) {
+              venue = venues[i];
+              res[venue] = [];
+            }
+            for (j = 0, len1 = arr.length; j < len1; j++) {
+              e = arr[j];
+              res[e.visit].push(e.name);
+            }
+            return resolve(res);
+          });
         });
       };
 

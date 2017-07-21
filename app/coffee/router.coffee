@@ -45,7 +45,10 @@ module.exports =
       @routes = []
 
     # Create a new CRUD resource with the given `name`, associated with the `controller`
-    resource: (name, controller, options) ->
+    resource: (name, controller, options, callback) ->
+      if typeof options is "function"
+        callback = options
+        options = null
       routes = [
         ["get", "new", "/#{name}/new"]
         ["post", "create", "/#{name}"]
@@ -64,6 +67,10 @@ module.exports =
           b = filter before, route[1]
           a = filter after, route[1]
           @addRoute "#{route[1]}_#{name}", route[0], route[2], b..., controller[route[1]], a...
+
+      r = new Router(@adapter, @app, @prefix + "/#{name}/:#{name}_id")
+      callback?(r)
+      return r
 
     # Create a new route within the router and add it to the app if already provided
     addRoute: (alias, method, endpoint, middlewares...) ->
@@ -87,10 +94,12 @@ module.exports =
           @addRoute alias, method, endpoint, middlewares...
 
     # Return a sub router
-    scope: (prefix) ->
+    scope: (prefix, callback) ->
       if prefix.charAt(0) != "/"
         prefix = "/" + prefix
-      new Router(@adapter, @app, @prefix + prefix)
+      r = new Router(@adapter, @app, @prefix + prefix)
+      callback?(r)
+      return r
 
 
     # Transform a route into a function adapting parameters into a path

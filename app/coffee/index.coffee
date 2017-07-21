@@ -17,6 +17,7 @@ db_connection (db) ->
   Poll = require("./voting-app/poll.js") db.collection("polls"), require("mongodb").ObjectId
   User = require("./user.js")(db.collection("users"))
   venue_controller = require('./nightlife/venue_controller.js')(User)
+  visits_controller = require("./nightlife/visit_controller.js")(User)
   voting = require("./voting-app/poll_controller.js")(Poll)
   voting_options = require("./voting-app/option_controller.js")(Poll)
 
@@ -52,7 +53,8 @@ db_connection (db) ->
   app.post "/voting-app/polls/:name/options", authentication.isAuthenticated, voting_options.create
 
   # Nightlife oordinator
-  router.scope("nightlife").resource "venues", venue_controller
+  router.scope("nightlife").resource "venues", venue_controller, (r) ->
+    r.resource "visits", visits_controller
 
   # Authentication
   app.get "/login", (req, res) -> res.render "login.pug", redirect: req.query.redirect
@@ -73,4 +75,4 @@ db_connection (db) ->
   # Start the application
   app.listen port
   console.log "Listening to port #{port}"
-  console.log "Paths: ", app.locals.path
+  console.log "Paths: ", Object.keys app.locals.path

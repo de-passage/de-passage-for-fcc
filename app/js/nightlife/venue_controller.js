@@ -18,7 +18,6 @@
         ref = req.query, type = ref.type, longitude = ref.longitude, latitude = ref.latitude, location = ref.location;
         view = "venues/index.pug";
         if (((longitude != null) && (latitude != null)) || (location != null)) {
-          console.log("here");
           params = [];
           ref1 = ["longitude", "latitude", "location"];
           for (i = 0, len = ref1.length; i < len; i++) {
@@ -30,8 +29,6 @@
           url = "api.yelp.com";
           path = "/v3/businesses/search?" + params.join("&");
           token = cache.get("yelp_token");
-          console.log("Fetching ", url, path);
-          console.log("token: ", token);
           return https.get({
             host: url,
             path: path,
@@ -46,17 +43,34 @@
               return rawData += chunk;
             });
             resp.on("end", function() {
-              var e, parsedData;
-              console.log(rawData);
+              var business, e, parsedData, venues;
               try {
                 parsedData = JSON.parse(rawData);
-                if (type === "json") {
-                  return res.json(parsedData);
-                } else {
-                  return res.render(view, {
-                    yelpData: parsedData
-                  });
-                }
+                venues = (function() {
+                  var j, len1, ref2, results1;
+                  ref2 = parsedData.businesses;
+                  results1 = [];
+                  for (j = 0, len1 = ref2.length; j < len1; j++) {
+                    business = ref2[j];
+                    results1.push(business.id);
+                  }
+                  return results1;
+                })();
+                return User.aggregateVisits(venues).then(function(results) {
+                  var j, len1, ref2;
+                  ref2 = parsedData.businesses;
+                  for (j = 0, len1 = ref2.length; j < len1; j++) {
+                    business = ref2[j];
+                    business.going = results[business.id].length;
+                  }
+                  if (type === "json") {
+                    return res.json(parsedData);
+                  } else {
+                    return res.render(view, {
+                      yelpData: parsedData
+                    });
+                  }
+                });
               } catch (_error) {
                 e = _error;
                 if (type === "json") {

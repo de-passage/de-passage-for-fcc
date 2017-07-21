@@ -11,6 +11,7 @@
       }
       data = window.yelpData.businesses;
     }
+    $("#venue-list").show();
     return venueList = new Vue({
       el: "#venue-list",
       data: {

@@ -83,23 +83,28 @@
       this.routes = [];
     }
 
-    Router.prototype.resource = function(name, controller, options) {
-      var a, after, b, before, i, len, results, route, routes;
+    Router.prototype.resource = function(name, controller, options, callback) {
+      var a, after, b, before, i, len, r, route, routes;
+      if (typeof options === "function") {
+        callback = options;
+        options = null;
+      }
       routes = [["get", "new", "/" + name + "/new"], ["post", "create", "/" + name], ["get", "show", "/" + name + "/:" + name + "_id"], ["get", "index", "/" + name], ["get", "edit", "/" + name + "/:" + name + "_id/edit"], ["put", "update", "/" + name + "/:" + name + "_id"], ["delete", "destroy", "/" + name + "/:" + name + "_id"]];
       before = extract(controller.before);
       after = extract(controller.after);
-      results = [];
       for (i = 0, len = routes.length; i < len; i++) {
         route = routes[i];
         if (typeof controller[route[1]] === "function") {
           b = filter(before, route[1]);
           a = filter(after, route[1]);
-          results.push(this.addRoute.apply(this, [route[1] + "_" + name, route[0], route[2]].concat(slice.call(b), [controller[route[1]]], slice.call(a))));
-        } else {
-          results.push(void 0);
+          this.addRoute.apply(this, [route[1] + "_" + name, route[0], route[2]].concat(slice.call(b), [controller[route[1]]], slice.call(a)));
         }
       }
-      return results;
+      r = new Router(this.adapter, this.app, this.prefix + ("/" + name + "/:" + name + "_id"));
+      if (typeof callback === "function") {
+        callback(r);
+      }
+      return r;
     };
 
     Router.prototype.addRoute = function() {
@@ -138,11 +143,16 @@
       })(method);
     }
 
-    Router.prototype.scope = function(prefix) {
+    Router.prototype.scope = function(prefix, callback) {
+      var r;
       if (prefix.charAt(0) !== "/") {
         prefix = "/" + prefix;
       }
-      return new Router(this.adapter, this.app, this.prefix + prefix);
+      r = new Router(this.adapter, this.app, this.prefix + prefix);
+      if (typeof callback === "function") {
+        callback(r);
+      }
+      return r;
     };
 
     Router.adapt = function(endpoint, method, adapter) {

@@ -5,29 +5,39 @@ block title
 
 block content
   p Near you:
-  ul.list-group#venue-list(v-if=items)
+  ul.list-group#venue-list(v-if=items, style="display: none")
     li.list-group-item(v-for="item in items") 
-      .row(style="width: 100%")
+      .row.row-collapse-animation(style="width: 100%", v-bind:class="{ 'row-collapsed': !item.shown, 'row-opened': item.shown }")
         .col-2
-          img.img-fluid(:src="item.image_url", style="max-width: 100%")
+          img.img-fluid.thumbnail(:src="item.image_url", style="max-width: 100%")
         .col-10
           h3 {{ item.name }}
-          .row
-            .col-3 {{ item.rating }} stars
-            .col-3 {{ item.review_count }} reviews
-            .col-3
+          .row.mb-2
+            .col-md-2.col-4 {{ item.price }}
+            .col-md-2.col-4 {{ item.rating }} stars
+            .col-md-2.col-4 {{ item.review_count }} reviews
+            .col-md-2.col-4 {{ item.going }} Going
+            .col-md-2.col-4
               span(v-if="item.is_closed") Closed
               span(v-else=true) Open
-          template(v-if="item.shown")
-            p {{ item.location.display_address.join(", ") }}
-            p Phone{{ item.display_phone }}
-            a(href="item.url", target="_blank") Yelp page
-            ul.list-group
-              li.list-group-item(v-for="i in items.categories")
-                | {{ i.title }}
-            button.btn.btn-secondary(type="button", @click="toggle(item)") Less
-          template(v-else=true)
-            button.btn.btn-secondary(type="button", v-on:click="toggle(item)") More
+            .col-4.col-md-2.text-right(v-if="!item.shown")
+              transition(name="slide")
+                button.btn.btn-secondary(type="button", v-on:click="toggle(item)") More
+                  i.fa.fa-caret-down.ml-2(aria-hidden="true")
+          transition(name="slide")
+            template(v-if="item.shown")
+              .col-12
+                p.mt-3 {{ item.location.display_address.join(", ") }}
+                p {{ item.display_phone }}
+                ul.tag-list.mb-1
+                  li.badge.badge-info.mr-1(v-for="i in item.categories")
+                    | {{ i.title }}
+                .row
+                  .col-6
+                    a(href="item.url", target="_blank") Yelp page
+                  .col-6.text-right
+                    button.btn.btn-secondary.no-transition(type="button", @click="toggle(item)") Less
+                      i.fa.fa-caret-up.ml-2(aria-hidden="true")
 
 
 
@@ -36,3 +46,7 @@ block scripts
   script(type="text/javascript")
     | window.yelpData = !{ yelpData ? JSON.stringify(yelpData) : "null"};
   script(src="/scripts/yelp.js")
+
+block styles
+  link(rel="stylesheet", href="/styles/yelp_list.css")
+  link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css")

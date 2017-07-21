@@ -17,12 +17,13 @@
   db_connection = require("./config/db.js");
 
   db_connection(function(db) {
-    var Poll, User, authentication, imgsrch, venue_controller, voting, voting_options;
+    var Poll, User, authentication, imgsrch, venue_controller, visits_controller, voting, voting_options;
     authentication = require("./authentication.js")(db);
     imgsrch = require("./imgsrch/main.js")(db);
     Poll = require("./voting-app/poll.js")(db.collection("polls"), require("mongodb").ObjectId);
     User = require("./user.js")(db.collection("users"));
     venue_controller = require('./nightlife/venue_controller.js')(User);
+    visits_controller = require("./nightlife/visit_controller.js")(User);
     voting = require("./voting-app/poll_controller.js")(Poll);
     voting_options = require("./voting-app/option_controller.js")(Poll);
     app.get("/", function(req, res) {
@@ -53,7 +54,9 @@
     app["delete"]("/voting-app/poll/:name", authentication.isAuthenticated, voting.destroy);
     app.post("/voting-app/polls/vote", voting.vote);
     app.post("/voting-app/polls/:name/options", authentication.isAuthenticated, voting_options.create);
-    router.scope("nightlife").resource("venues", venue_controller);
+    router.scope("nightlife").resource("venues", venue_controller, function(r) {
+      return r.resource("visits", visits_controller);
+    });
     app.get("/login", function(req, res) {
       return res.render("login.pug", {
         redirect: req.query.redirect
@@ -78,7 +81,7 @@
     });
     app.listen(port);
     console.log("Listening to port " + port);
-    return console.log("Paths: ", app.locals.path);
+    return console.log("Paths: ", Object.keys(app.locals.path));
   });
 
 }).call(this);

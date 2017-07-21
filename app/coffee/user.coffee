@@ -8,7 +8,8 @@ instanciateUser = (db) ->
   # #########################
 
   class User
-    constructor: (@name, @email, @password) ->
+    constructor: (@name, @email, @password, @visit) ->
+      @visit ?= {}
 
     verifyPassword: (password) ->
       bcrypt.compareSync(password, @password)
@@ -21,8 +22,8 @@ instanciateUser = (db) ->
           _id: if @id then ObjectId(@id) else undefined
           username: @name
           email: @email
-          #vote: @votes
           password: @password
+          visit: @visit
         }, (err, obj) =>
           return callback? err if err
           @id = obj._id
@@ -33,8 +34,24 @@ instanciateUser = (db) ->
         callback err if err
         user = false
         if result?
-          user = new User(result.username, result.email, result.password)
+          user = new User(result.username, result.email, result.password, result.visit)
           user.id = result._id
         callback null, user
+
+    @aggregateVisits = (venues) ->
+      new Promise (resolve, reject) ->
+        db.find( { visit: $in: venues }, { visit: 1, name: 1 } ).toArray (err, arr) ->
+          return reject err if err
+          return resolve [] unless arr
+          res = {}
+          for venue in venues
+            res[venue] = []
+          for e in arr
+            res[e.visit].push e.name
+
+          resolve res
+
+
+      
 
 module.exports = instanciateUser

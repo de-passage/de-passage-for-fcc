@@ -4,15 +4,54 @@ https = require "https"
 fetchYelpData = (req, res) ->
 
 module.exports = (User) ->
+
   show: (req, res) ->
     res.render("venues/show.pug")
+    id = req.params.venues_id
+    view = "venues/show.pug"
+    url = "api.yelp.com"
+    path = "/v3/businesses/#{id}"
+    token = cache.get("yelp_token")
+
+    https.get
+      host: url
+      path: path
+      headers:
+        "Authorization": "Bearer " + token
+      port: process.env.PORT
+      (resp) ->
+        rawData = ""
+        resp.on "data", (chunk) -> rawData += chunk
+        resp.on "end", ->
+          try
+            parsedData = JSON.parse rawData
+            User.aggregateVisits([id]).then (arr) ->
+              parsedData.visits = arr
+              res.render view, yelpData: parsedData
+          catch e
+            if type == "json"
+              res.status(500).json e
+            else
+              if Array.isArray app.locals.flash["error"]
+                app.locals.flash["error"].push e.message
+              else
+                app.locals.flash["error"] = e.message
+              res.render view
+        resp.on "error", (err) ->
+          if type == "json"
+            res.status(500).json(err)
+          else
+            if Array.isArray app.locals.flash["error"]
+              app.locals.flash["error"].push e.message
+            else
+              app.locals.flash["error"] = e.message
+            res.render view
 
   index: (req, res) ->
     { type, longitude, latitude, location } = req.query
     view = "venues/index.pug"
 
     if (longitude? and latitude?) or location?
-      console.log "here"
       params = []
       for param in [ "longitude", "latitude", "location" ]
         if req.query[param]?
@@ -34,11 +73,14 @@ module.exports = (User) ->
           resp.on "end", ->
             try
               parsedData = JSON.parse rawData
-              if type == "json"
-                res.json(parsedData)
-              else
-                res.render view, yelpData: parsedData
-
+              venues = (business.id for business in parsedData.businesses)
+              User.aggregateVisits(venues).then((results) ->
+                business.going = results[business.id].length for business in parsedData.businesses
+                if type == "json"
+                  res.json(parsedData)
+                else
+                  res.render view, yelpData: parsedData
+              )
             catch e
               if type == "json"
                 res.status(500).json e

@@ -5,6 +5,7 @@ $ ->
       d.shown = false
     data = window.yelpData.businesses
 
+  $("#venue-list").show()
   venueList = new Vue
     el: "#venue-list"
     data:

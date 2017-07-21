@@ -226,3 +226,23 @@ describe "Router", ->
         sinon.assert.callOrder f2, C.update
       f1.reset()
       f2.reset()
+
+  it "should accept a callback for resources which allows to define nested resources", ->
+    expectations = []
+    SubResource =
+      show: ->
+      index: ->
+      update: ->
+      destroy: ->
+
+    router.resource "resource", Resource, (r) ->
+      r.resource "subresource", SubResource
+
+    app.delete.callCount.should.equal 2
+    app.put.callCount.should.equal 2
+    app.get.callCount.should.equal 6
+
+    app.locals.path.show_subresource(0, 0).should.equal "/resource/0/subresource/0"
+    app.locals.path.index_subresource(0).should.equal "/resource/0/subresource"
+    app.locals.path.update_subresource(0,0).should.equal "/resource/0/subresource/0?_method=PUT"
+    app.locals.path.destroy_subresource(2,0).should.equal "/resource/2/subresource/0?_method=DELETE"

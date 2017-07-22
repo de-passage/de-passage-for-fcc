@@ -11,7 +11,62 @@
   module.exports = function(User) {
     return {
       show: function(req, res) {
-        return res.render("venues/show.pug");
+        var id, path, token, url, view;
+        id = req.params.venues_id;
+        view = "venues/show.pug";
+        url = "api.yelp.com";
+        path = "/v3/businesses/" + id;
+        token = cache.get("yelp_token");
+        return https.get({
+          host: url,
+          path: path,
+          headers: {
+            "Authorization": "Bearer " + token
+          },
+          port: process.env.PORT
+        }, function(resp) {
+          var rawData;
+          rawData = "";
+          resp.on("data", function(chunk) {
+            return rawData += chunk;
+          });
+          resp.on("end", function() {
+            var e, parsedData;
+            try {
+              parsedData = JSON.parse(rawData);
+              return User.aggregateVisits([id]).then(function(arr) {
+                parsedData.visits = arr;
+                return res.render(view, {
+                  yelpData: parsedData
+                });
+              });
+            } catch (_error) {
+              e = _error;
+              if (type === "json") {
+                return res.status(500).json(e);
+              } else {
+                if (Array.isArray(app.locals.flash["error"])) {
+                  app.locals.flash["error"].push(e.message);
+                } else {
+                  app.locals.flash["error"] = e.message;
+                }
+                return res.render(view);
+              }
+            }
+          });
+          return resp.on("error", function(err) {
+            if (type === "json") {
+              return res.status(500).json(err);
+            } else {
+              if (Array.isArray(app.locals.flash["error"])) {
+                app.locals.flash["error"].push(e.message);
+              } else {
+                app.locals.flash["error"] = e.message;
+              }
+              return res.render(view);
+            }
+          });
+        });
       },
       index: function(req, res) {
         var i, latitude, len, location, longitude, param, params, path, ref, ref1, token, type, url, view;

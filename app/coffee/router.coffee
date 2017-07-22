@@ -107,12 +107,10 @@ module.exports =
       tokens = endpoint.split(/:[^/]+/)
       count = tokens.length - 1
       count = 0 if count < 0
-      do (tokens, count) ->
+      do (tokens, count, adapter) ->
         (args...) ->
           path = tokens[0]
-          pos = 0
-          while count-- > 0
+          for pos in [0...count]
             path += args[pos] + tokens[pos + 1]
-            pos++
           path = adapter(path, method) if adapter?
           path

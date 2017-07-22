@@ -1,0 +1,22 @@
+.carousel-inner .carousel-item img {
+  margin: 0 auto !important;
+  max-height: 500px; }
+
+.closed-indicator {
+  color: white;
+  background-color: red;
+  border-radius: 5px;
+  padding: 5px;
+  font-weight: bold; }
+
+.open-indicator {
+  color: white;
+  background-color: green;
+  border-radius: 5px;
+  padding: 5px;
+  font-weight: bold; }
+
+.tag-list {
+  padding: 0; }
+
+/*# sourceMappingURL=show_venues.css.map */

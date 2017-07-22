@@ -6,7 +6,6 @@ fetchYelpData = (req, res) ->
 module.exports = (User) ->
 
   show: (req, res) ->
-    res.render("venues/show.pug")
     id = req.params.venues_id
     view = "venues/show.pug"
     url = "api.yelp.com"

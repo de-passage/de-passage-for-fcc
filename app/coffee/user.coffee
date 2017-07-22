@@ -40,18 +40,15 @@ instanciateUser = (db) ->
 
     @aggregateVisits = (venues) ->
       new Promise (resolve, reject) ->
-        db.find( { visit: $in: venues }, { visit: 1, name: 1 } ).toArray (err, arr) ->
+        db.find( { visit: $in: venues }, { visit: 1, username: 1 } ).toArray (err, arr) ->
           return reject err if err
           return resolve [] unless arr
           res = {}
           for venue in venues
             res[venue] = []
           for e in arr
-            res[e.visit].push e.name
+            res[e.visit].push e.username
 
           resolve res
-
-
-      
 
 module.exports = instanciateUser

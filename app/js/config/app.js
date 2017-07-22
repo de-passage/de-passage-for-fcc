@@ -65,6 +65,7 @@
       res.locals.user = req.user;
     }
     res.locals.url = encodeURIComponent(req.url);
+    res.locals.path = app.locals.path;
     return next();
   });
 

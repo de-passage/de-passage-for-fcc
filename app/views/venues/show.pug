@@ -1,4 +1,86 @@
 extends ../layout.pug
 
 block title
-  | Venue
+  | #{yelpData.name}
+
+block content
+  .row.mt-4
+    .col-12.col-md-7
+      .row
+        .col-6.col-md-3
+          p #{yelpData.price}
+        .col-6.col-md-3
+          p #{yelpData.rating} stars
+        .col-6.col-md-3
+          p #{yelpData.review_count} reviews
+        .col-6.col-md-3
+          p
+            if yelpData.is_closed
+              span.closed-indicator Closed
+            else
+              span.open-indicator Open
+      p #{yelpData.location.display_address.join(", ")}
+      p #{yelpData.display_phone}
+      p
+        a(href=yelpData.url) Yelp page
+
+      p
+        ul.tag-list
+          each category in yelpData.categories
+            li.badge.badge-info.mr-1 #{category.title}
+      table
+        thead
+          th Business hours:
+        tbody
+          - var days = [ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" ]
+          - function prettyHour(hour) {
+          -   return hour.slice(0,2) + ":" + hour.slice(2);
+          - };
+          each hour in yelpData.hours[0].open
+            tr
+              th #{days[hour.day]} 
+              td #{prettyHour(hour.start)} 
+              td - 
+              td #{prettyHour(hour.end)}
+      #visit-display
+        if(user)
+          .mt-3
+            if(user.visit !== yelpData.id)
+              button.btn.btn-primary#visit(type="button", data-path=path.update_visits(yelpData.id, "self"), data-going="false") I am going
+            else
+              button.btn.btn-success#visit(type="button", data-path=path.destroy_visits(yelpData.id, "self"), data-going="true") Cancel my visit
+        .mt-2
+          if yelpData.visits[yelpData.id].length
+            | #{yelpData.visits[yelpData.id].length} #{yelpData.visits[yelpData.id].length == 1 ? "user is" : "users are"} going to this address:
+            ul.m-0
+            each visitor in yelpData.visits[yelpData.id]
+              li #{visitor}
+          else
+            | No one is going there
+
+    .col-12.col-md-5
+      #carousel.carousel.slide(data-ride="carousel")
+        .carousel-inner(role="listbox")
+          each image, i in yelpData.photos
+            .carousel-item(class=i ? "" : "active")
+              img.d-block.img-fluid(src=image)
+        a.carousel-control-prev(href="#carousel", role="button", data-slide="prev")
+          span.carousel-control-prev-icon(aria-hidden="true")
+          span.sr-only Previous
+        a.carousel-control-next(href="#carousel", role="button", data-slide="next")
+          span.carousel-control-next-icon(aria-hidden="true")
+          span.sr-only Next
+
+block styles
+  link(rel="stylesheet", href="/styles/show_venues.css")
+
+block scripts
+  script(src="https://unpkg.com/vue")
+  script(src="/scripts/show_venues.js", type="text/javascript")
+  script(src="https://code.jquery.com/jquery-3.2.1.min.js", integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=", crossorigin="anonymous")
+  script(type="text/javascript")
+    | window.yelpVisits = !{JSON.stringify(yelpData.visits)};
+    | window.user_going = !{JSON.stringify(user ? (user.visit === yelpData.id) : false)};
+    | window.update_url = !{JSON.stringify(path.update_visits(yelpData.id, "self"))};
+    | window.destroy_url = !{JSON.stringify(path.destroy_visits(yelpData.id, "self"))};
+    

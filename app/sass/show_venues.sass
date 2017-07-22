@@ -1,0 +1,21 @@
+.carousel-inner 
+  .carousel-item 
+    img
+      :margin 0 auto !important
+      :max-height 500px
+
+@mixin indicator($color)
+  :color white
+  :background-color $color
+  :border-radius 5px
+  :padding 5px
+  :font-weight bold
+
+.closed-indicator
+  @include indicator(red)
+
+.open-indicator
+  @include indicator(green)
+
+.tag-list
+  :padding 0

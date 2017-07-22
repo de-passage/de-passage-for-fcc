@@ -23,6 +23,7 @@ describe "User", ->
       email: "email"
       password: "password"
       _id: undefined
+      visit: { }
     user = new User expectedParameters.username, expectedParameters.email, expectedParameters.password
 
     db.expects("save").once().withArgs expectedParameters

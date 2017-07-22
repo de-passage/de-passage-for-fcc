@@ -68,7 +68,7 @@
             }
           }, {
             visit: 1,
-            name: 1
+            username: 1
           }).toArray(function(err, arr) {
             var e, i, j, len, len1, res, venue;
             if (err) {
@@ -77,6 +77,7 @@
             if (!arr) {
               return resolve([]);
             }
+            console.log(arr);
             res = {};
             for (i = 0, len = venues.length; i < len; i++) {
               venue = venues[i];
@@ -84,7 +85,7 @@
             }
             for (j = 0, len1 = arr.length; j < len1; j++) {
               e = arr[j];
-              res[e.visit].push(e.name);
+              res[e.visit].push(e.username);
             }
             return resolve(res);
           });

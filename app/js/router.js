@@ -162,22 +162,20 @@
       if (count < 0) {
         count = 0;
       }
-      return (function(tokens, count) {
+      return (function(tokens, count, adapter) {
         return function() {
-          var args, path, pos;
+          var args, j, path, pos, ref1;
           args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
           path = tokens[0];
-          pos = 0;
-          while (count-- > 0) {
+          for (pos = j = 0, ref1 = count; 0 <= ref1 ? j < ref1 : j > ref1; pos = 0 <= ref1 ? ++j : --j) {
             path += args[pos] + tokens[pos + 1];
-            pos++;
           }
           if (adapter != null) {
             path = adapter(path, method);
           }
           return path;
         };
-      })(tokens, count);
+      })(tokens, count, adapter);
     };
 
     return Router;

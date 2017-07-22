@@ -36,6 +36,7 @@ app.use (req, res, next) ->
   if req.user?
     res.locals.user = req.user
   res.locals.url = encodeURIComponent req.url
+  res.locals.path = app.locals.path
   next()
 
 # app.use(flash({ locals: 'flash' })) should be the way to go but

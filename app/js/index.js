@@ -54,8 +54,11 @@
     app["delete"]("/voting-app/poll/:name", authentication.isAuthenticated, voting.destroy);
     app.post("/voting-app/polls/vote", voting.vote);
     app.post("/voting-app/polls/:name/options", authentication.isAuthenticated, voting_options.create);
-    router.scope("nightlife").resource("venues", venue_controller, function(r) {
-      return r.resource("visits", visits_controller);
+    router.scope("nightlife", function(router) {
+      router.get("nightlife_autocomplete", "/search", venue_controller.search);
+      return router.resource("venues", venue_controller, function(router) {
+        return router.resource("visits", visits_controller);
+      });
     });
     app.get("/login", function(req, res) {
       return res.render("login.pug", {

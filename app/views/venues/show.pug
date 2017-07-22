@@ -42,21 +42,16 @@ block content
               td #{prettyHour(hour.start)} 
               td - 
               td #{prettyHour(hour.end)}
-      #visit-display
-        if(user)
-          .mt-3
-            if(user.visit !== yelpData.id)
-              button.btn.btn-primary#visit(type="button", data-path=path.update_visits(yelpData.id, "self"), data-going="false") I am going
-            else
-              button.btn.btn-success#visit(type="button", data-path=path.destroy_visits(yelpData.id, "self"), data-going="true") Cancel my visit
-        .mt-2
-          if yelpData.visits[yelpData.id].length
-            | #{yelpData.visits[yelpData.id].length} #{yelpData.visits[yelpData.id].length == 1 ? "user is" : "users are"} going to this address:
-            ul.m-0
-            each visitor in yelpData.visits[yelpData.id]
-              li #{visitor}
-          else
+      .row#visit-display
+        .mt-2.col-9
+          template(v-if="visits.length !== 0")
+            | {{ visits.length }} {{ visits.length == 1 ? "user is" : "users are" }} going to this address:
+            ul.m-0(v-for="visitor in visits")
+              li {{visitor}}
+          template(v-else=true)
             | No one is going there
+        .mt-3.col-3(v-if="user_logged_in")
+          button.btn(v-bind:class="user_going ? 'btn-success' : 'btn-primary'", type="button", @click="toggleVisit") {{ !user_going ? "I am going" : "Cancel my visit" }}
 
     .col-12.col-md-5
       #carousel.carousel.slide(data-ride="carousel")
@@ -79,8 +74,10 @@ block scripts
   script(src="/scripts/show_venues.js", type="text/javascript")
   script(src="https://code.jquery.com/jquery-3.2.1.min.js", integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=", crossorigin="anonymous")
   script(type="text/javascript")
-    | window.yelpVisits = !{JSON.stringify(yelpData.visits)};
+    | window.yelpVisits = !{JSON.stringify(yelpData.visits[yelpData.id])};
+    | window.yelpId = !{JSON.stringify(yelpData.id)};
     | window.user_going = !{JSON.stringify(user ? (user.visit === yelpData.id) : false)};
     | window.update_url = !{JSON.stringify(path.update_visits(yelpData.id, "self"))};
     | window.destroy_url = !{JSON.stringify(path.destroy_visits(yelpData.id, "self"))};
+    | window.user_logged_in = !{JSON.stringify(!!user)};
     

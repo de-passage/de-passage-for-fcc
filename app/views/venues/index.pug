@@ -4,48 +4,59 @@ block title
   | Venues
 
 block content
-  p Near you:
-  ul.list-group#venue-list(v-if=items, style="display: none")
-    li.list-group-item(v-for="item in items") 
-      .row.row-collapse-animation(style="width: 100%", v-bind:class="{ 'row-collapsed': !item.shown, 'row-opened': item.shown }")
-        .col-2
-          img.img-fluid.thumbnail(:src="item.image_url", style="max-width: 100%")
-        .col-10
-          h3 
-            a(v-bind:href= "'" + path.show_venues("") + "' + item.id") {{ item.name }}
-          .row.mb-2
-            .col-md-2.col-4 {{ item.price }}
-            .col-md-2.col-4 {{ item.rating }} stars
-            .col-md-2.col-4 {{ item.review_count }} reviews
-            .col-md-2.col-4 {{ item.going }} Going
-            .col-md-2.col-4
-              span(v-if="item.is_closed") Closed
-              span(v-else=true) Open
-            .col-4.col-md-2.text-right(v-if="!item.shown")
-              transition(name="slide")
-                button.btn.btn-secondary(type="button", v-on:click="toggle(item)") More
-                  i.fa.fa-caret-down.ml-2(aria-hidden="true")
-          transition(name="slide")
-            template(v-if="item.shown")
-              .col-12
-                p.mt-3 {{ item.location.display_address.join(", ") }}
-                p {{ item.display_phone }}
-                ul.tag-list.mb-1
-                  li.badge.badge-info.mr-1(v-for="i in item.categories")
-                    | {{ i.title }}
-                .row
-                  .col-6
-                    a(href="item.url", target="_blank") Yelp page
-                  .col-6.text-right
-                    button.btn.btn-secondary.no-transition(type="button", @click="toggle(item)") Less
-                      i.fa.fa-caret-up.ml-2(aria-hidden="true")
+  .row#app-container
+    form.col-12.col-sm-10.offset-sm-1.col-md-8.offset-md-2.col-lg-6.col-offset-3.my-3
+      .form-group
+        .row
+          .col-11
+            input.form-control#search-bar(type="text", @input="autocomplete")
+          .col-1
+            input.btn.btn-primary(type="submit", value="Search", @click="search")
+    ul.list-group#venue-list(v-if=items, style="display: none")
+      li.list-group-item(v-for="item in items") 
+        .row.row-collapse-animation(style="width: 100%", v-bind:class="{ 'row-collapsed': !item.shown, 'row-opened': item.shown }")
+          .col-2
+            img.img-fluid.thumbnail(:src="item.image_url", style="max-width: 100%")
+          .col-10
+            h3 
+              a(v-bind:href= "'" + path.show_venues("") + "' + item.id") {{ item.name }}
+            .row.mb-2
+              .col-md-2.col-4.pt-2 {{ item.price }}
+              .col-md-2.col-4.pt-2 {{ item.rating }} stars
+              .col-md-2.col-4.pt-2 {{ item.review_count }} reviews
+              .col-md-2.col-4.pt-2 {{ item.going }} Going
+              .col-md-2.col-4.pt-2
+                span(v-if="item.is_closed") Closed
+                span(v-else=true) Open
+              .col-4.col-md-2.text-right(v-if="!item.shown")
+                transition(name="slide")
+                  button.btn.btn-secondary(type="button", v-on:click="toggle(item)") More
+                    i.fa.fa-caret-down.ml-2(aria-hidden="true")
+            transition(name="slide")
+              template(v-if="item.shown")
+                .col-12
+                  p.mt-3 {{ item.location.display_address.join(", ") }}
+                  p {{ item.display_phone }}
+                  ul.tag-list.mb-1
+                    li.badge.badge-info.mr-1(v-for="i in item.categories")
+                      | {{ i.title }}
+                  .row
+                    .col-6
+                      a(href="item.url", target="_blank") Yelp page
+                    .col-6.text-right
+                      button.btn.btn-secondary.no-transition(type="button", @click="toggle(item)") Less
+                        i.fa.fa-caret-up.ml-2(aria-hidden="true")
+  p(v-else=true) No results
 
 
 
 block scripts
   script(src="https://unpkg.com/vue")
+  script(src="https://code.jquery.com/jquery-3.2.1.min.js", integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=", crossorigin="anonymous")
   script(type="text/javascript")
     | window.yelpData = !{ yelpData ? JSON.stringify(yelpData) : "null"};
+    | window.searchURL = !{ '"' + path.index_venues() + '?type=json"' };
+    | window.autocompleteURL = !{ "'" + path.nightlife_autocomplete() + "'"};
   script(src="/scripts/yelp.js")
 
 block styles

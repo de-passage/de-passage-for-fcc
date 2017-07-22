@@ -77,7 +77,6 @@
             if (!arr) {
               return resolve([]);
             }
-            console.log(arr);
             res = {};
             for (i = 0, len = venues.length; i < len; i++) {
               venue = venues[i];

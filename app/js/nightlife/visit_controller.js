@@ -4,7 +4,16 @@
     var authentication;
     authentication = require("../authentication.js");
     return {
-      before: authentication.isAuthenticated,
+      before: function(req, res, next) {
+        console.log("called");
+        if (req.user) {
+          return next();
+        } else {
+          return res.status(403).json({
+            error: "You need to be authenticated to access this page"
+          });
+        }
+      },
       update: function(req, res) {
         var id;
         id = req.params.venues_id;
@@ -12,8 +21,7 @@
         return req.user.save(function() {
           return User.aggregateVisits([id]).then(function(visits) {
             return res.json({
-              url: res.locals.path.destroy_visits(id, "self"),
-              visits: visits
+              visits: visits[id]
             });
           });
         });
@@ -25,8 +33,7 @@
         return req.user.save(function() {
           return User.aggregateVisits([id]).then(function(visits) {
             return res.json({
-              url: res.locals.path.update_visits(id, "self"),
-              visits: visits
+              visits: visits[id]
             });
           });
         });

@@ -266,3 +266,9 @@ describe "Router", ->
     app.locals.path.destroy_subresource(2,0).should.equal "/scope/resource/2/subresource/0?_method=DELETE"
     app.locals.path.destroy_subresource(2,0).should.equal "/scope/resource/2/subresource/0?_method=DELETE"
 
+  it "should accept a callback for scoping", ->
+    router.scope "/scope", (r) ->
+      r.get("res", "/resource", ->)
+    app.locals.path.res().should.equal "/scope/resource"
+    sinon.assert.calledOnce(app.get)
+

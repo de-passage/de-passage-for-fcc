@@ -53,8 +53,10 @@ db_connection (db) ->
   app.post "/voting-app/polls/:name/options", authentication.isAuthenticated, voting_options.create
 
   # Nightlife oordinator
-  router.scope("nightlife").resource "venues", venue_controller, (r) ->
-    r.resource "visits", visits_controller
+  router.scope "nightlife", (router) ->
+    router.get "nightlife_autocomplete", "/search", venue_controller.search
+    router.resource "venues", venue_controller, (router) ->
+      router.resource "visits", visits_controller
 
   # Authentication
   app.get "/login", (req, res) -> res.render "login.pug", redirect: req.query.redirect

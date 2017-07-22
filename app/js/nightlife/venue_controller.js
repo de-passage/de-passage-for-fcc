@@ -42,22 +42,6 @@
               });
             } catch (_error) {
               e = _error;
-              if (type === "json") {
-                return res.status(500).json(e);
-              } else {
-                if (Array.isArray(app.locals.flash["error"])) {
-                  app.locals.flash["error"].push(e.message);
-                } else {
-                  app.locals.flash["error"] = e.message;
-                }
-                return res.render(view);
-              }
-            }
-          });
-          return resp.on("error", function(err) {
-            if (type === "json") {
-              return res.status(500).json(err);
-            } else {
               if (Array.isArray(app.locals.flash["error"])) {
                 app.locals.flash["error"].push(e.message);
               } else {
@@ -65,6 +49,14 @@
               }
               return res.render(view);
             }
+          });
+          return resp.on("error", function(err) {
+            if (Array.isArray(app.locals.flash["error"])) {
+              app.locals.flash["error"].push(e.message);
+            } else {
+              app.locals.flash["error"] = e.message;
+            }
+            return res.render(view);
           });
         });
       },
@@ -74,11 +66,11 @@
         view = "venues/index.pug";
         if (((longitude != null) && (latitude != null)) || (location != null)) {
           params = [];
-          ref1 = ["longitude", "latitude", "location"];
+          ref1 = ["longitude", "latitude", "location", "term"];
           for (i = 0, len = ref1.length; i < len; i++) {
             param = ref1[i];
             if (req.query[param] != null) {
-              params.push(param + "=" + req.query[param]);
+              params.push(param + "=" + encodeURIComponent(req.query[param]));
             }
           }
           url = "api.yelp.com";
@@ -160,6 +152,42 @@
             return res.render(view);
           }
         }
+      },
+      search: function(req, res) {
+        var i, len, param, params, path, ref, token, url;
+        console.log("called");
+        params = [];
+        ref = ["longitude", "latitude", "text"];
+        for (i = 0, len = ref.length; i < len; i++) {
+          param = ref[i];
+          if (req.query[param] != null) {
+            params.push(param + "=" + encodeURIComponent(req.query[param]));
+          }
+        }
+        url = "api.yelp.com";
+        path = "/v3/autocomplete?" + params.join("&");
+        token = cache.get("yelp_token");
+        return https.get({
+          host: url,
+          path: path,
+          headers: {
+            "Authorization": "Bearer " + token
+          },
+          port: process.env.PORT
+        }, function(resp) {
+          var rawData;
+          rawData = "";
+          resp.on("data", function(chunk) {
+            return rawData += chunk;
+          });
+          return resp.on("end", function() {
+            var parsedData;
+            try {
+              parsedData = JSON.parse(rawData);
+              return res.json(parsedData);
+            } catch (_error) {}
+          });
+        });
       }
     };
   };

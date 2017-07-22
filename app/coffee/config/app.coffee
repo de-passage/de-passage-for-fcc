@@ -6,7 +6,7 @@ session = require "express-session"
 passport = require "passport"
 flash = require "connect-flash"
 methodOverride = require "method-override"
-morgan = if process.env.DEVELOPMENT_ENV then require "morgan" else null
+morgan = require "morgan"
 yelp = require "./yelp_auth.js"
 yelp()
 
@@ -14,7 +14,7 @@ app = express()
 
 secret = process.env.SECRET || "secret key here"
 
-if morgan?
+if process.env.DEVELOPMENT_ENV
   app.use morgan("combined")
 
 app.use methodOverride("_method")

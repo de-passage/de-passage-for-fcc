@@ -10,7 +10,7 @@
 
   cookieParser = require("cookie-parser");
 
-  session = require("express-session");
+  session = require("cookie-session");
 
   passport = require("passport");
 
@@ -28,7 +28,9 @@
 
   secret = process.env.SECRET || "secret key here";
 
-  app.use(morgan("combined"));
+  if (process.env.DEVELOPMENT_ENV) {
+    app.use(morgan("combined"));
+  }
 
   app.use(methodOverride("_method"));
 
@@ -38,8 +40,7 @@
 
   app.use(session({
     secret: secret,
-    resave: false,
-    saveUninitialized: false
+    name: "session"
   }));
 
   app.use(body_parser.json());

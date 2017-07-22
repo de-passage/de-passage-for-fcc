@@ -2,7 +2,7 @@ express = require 'express'
 path = require 'path'
 body_parser = require('body-parser')
 cookieParser = require "cookie-parser"
-session = require "express-session"
+session = require "cookie-session"
 passport = require "passport"
 flash = require "connect-flash"
 methodOverride = require "method-override"
@@ -22,7 +22,7 @@ app.use methodOverride("_method")
 app.set 'views', 'app/views'
 app.set 'view engine', 'pug'
 
-app.use session secret: secret, resave: false, saveUninitialized: false
+app.use session secret: secret, name: "session"#, resave: false, saveUninitialized: false
 app.use body_parser.json()
 app.use body_parser.urlencoded extended: true
 app.use cookieParser()

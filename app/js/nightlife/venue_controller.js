@@ -22,8 +22,7 @@
           path: path,
           headers: {
             "Authorization": "Bearer " + token
-          },
-          port: process.env.PORT
+          }
         }, function(resp) {
           var rawData;
           rawData = "";

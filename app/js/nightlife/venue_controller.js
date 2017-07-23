@@ -11,13 +11,13 @@
   module.exports = function(User) {
     return {
       show: function(req, res) {
-        var id, path, token, url, view;
+        var id, path, request, token, url, view;
         id = req.params.venues_id;
         view = "venues/show.pug";
         url = "api.yelp.com";
         path = "/v3/businesses/" + id;
         token = cache.get("yelp_token");
-        return https.get({
+        request = https.get({
           host: url,
           path: path,
           headers: {
@@ -42,26 +42,35 @@
               });
             } catch (_error) {
               e = _error;
-              if (Array.isArray(app.locals.flash["error"])) {
-                app.locals.flash["error"].push(e.message);
+              if (Array.isArray(res.locals.flash["error"])) {
+                res.locals.flash["error"].push(e.message);
               } else {
-                app.locals.flash["error"] = e.message;
+                res.locals.flash["error"] = e.message;
               }
               return res.render(view);
             }
           });
           return resp.on("error", function(err) {
-            if (Array.isArray(app.locals.flash["error"])) {
-              app.locals.flash["error"].push(e.message);
+            if (Array.isArray(res.locals.flash["error"])) {
+              res.locals.flash["error"].push(e.message);
             } else {
-              app.locals.flash["error"] = e.message;
+              res.locals.flash["error"] = e.message;
             }
             return res.render(view);
           });
         });
+        request.on("error", function(e) {
+          console.log("Error with request to access the Yelp Business API", e.message);
+          if (Array.isArray(res.locals.flash["error"])) {
+            return res.locals.flash["error"].push(err.message);
+          } else {
+            return res.locals.flash["error"] = err.message;
+          }
+        });
+        return request.end();
       },
       index: function(req, res) {
-        var i, latitude, len, location, longitude, param, params, path, ref, ref1, token, type, url, view;
+        var i, latitude, len, location, longitude, param, params, path, ref, ref1, request, token, type, url, view;
         ref = req.query, type = ref.type, longitude = ref.longitude, latitude = ref.latitude, location = ref.location;
         view = "venues/index.pug";
         if (((longitude != null) && (latitude != null)) || (location != null)) {
@@ -76,7 +85,7 @@
           url = "api.yelp.com";
           path = "/v3/businesses/search?" + params.join("&");
           token = cache.get("yelp_token");
-          return https.get({
+          request = https.get({
             host: url,
             path: path,
             headers: {
@@ -88,7 +97,7 @@
             resp.on("data", function(chunk) {
               return rawData += chunk;
             });
-            resp.on("end", function() {
+            return resp.on("end", function() {
               var business, e, parsedData, venues;
               try {
                 parsedData = JSON.parse(rawData);
@@ -122,28 +131,29 @@
                 if (type === "json") {
                   return res.status(500).json(e);
                 } else {
-                  if (Array.isArray(app.locals.flash["error"])) {
-                    app.locals.flash["error"].push(e.message);
+                  if (Array.isArray(res.locals.flash["error"])) {
+                    res.locals.flash["error"].push(e.message);
                   } else {
-                    app.locals.flash["error"] = e.message;
+                    res.locals.flash["error"] = e.message;
                   }
                   return res.render(view);
                 }
               }
             });
-            return resp.on("error", function(err) {
-              if (type === "json") {
-                return res.status(500).json(err);
-              } else {
-                if (Array.isArray(app.locals.flash["error"])) {
-                  app.locals.flash["error"].push(e.message);
-                } else {
-                  app.locals.flash["error"] = e.message;
-                }
-                return res.render(view);
-              }
-            });
           });
+          request.on("error", function(err) {
+            if (type === "json") {
+              return res.status(500).json(err);
+            } else {
+              if (Array.isArray(res.locals.flash["error"])) {
+                res.locals.flash["error"].push(err.message);
+              } else {
+                res.locals.flash["error"] = err.message;
+              }
+              return res.render(view);
+            }
+          });
+          return request.end();
         } else {
           if ("json" === type) {
             return res.json({});
@@ -153,7 +163,7 @@
         }
       },
       search: function(req, res) {
-        var i, len, param, params, path, ref, token, url;
+        var i, len, param, params, path, ref, request, token, url;
         console.log("called");
         params = [];
         ref = ["longitude", "latitude", "text"];
@@ -166,7 +176,7 @@
         url = "api.yelp.com";
         path = "/v3/autocomplete?" + params.join("&");
         token = cache.get("yelp_token");
-        return https.get({
+        request = https.get({
           host: url,
           path: path,
           headers: {
@@ -186,6 +196,11 @@
             } catch (_error) {}
           });
         });
+        request.on("error", function(err) {
+          console.log("Error with the request to access the Yelp Autocomplete API: ", err.message);
+          return res.status(500).json(err);
+        });
+        return request.end();
       }
     };
   };

@@ -36,7 +36,7 @@ $ ->
   venueList = new Vue
     el: "#app-container"
     data:
-      items: []
+      items: null
       coords: null
     methods:
       toggle: (e) -> e.shown = !e.shown
@@ -47,7 +47,7 @@ $ ->
             method: "GET",
             dataType: "json"
           .done((args) ->
-            #console.log "response: ", JSON.stringify(args)
+            console.log "response: ", JSON.stringify(args)
           ).fail -> console.log "failed"
             
       search: (event) ->

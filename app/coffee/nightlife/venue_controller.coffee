@@ -12,7 +12,7 @@ module.exports = (User) ->
     path = "/v3/businesses/#{id}"
     token = cache.get("yelp_token")
 
-    https.get
+    request = https.get
       host: url
       path: path
       headers:
@@ -28,17 +28,24 @@ module.exports = (User) ->
               parsedData.visits = arr
               res.render view, yelpData: parsedData
           catch e
-            if Array.isArray app.locals.flash["error"]
-              app.locals.flash["error"].push e.message
+            if Array.isArray res.locals.flash["error"]
+              res.locals.flash["error"].push e.message
             else
-              app.locals.flash["error"] = e.message
+              res.locals.flash["error"] = e.message
             res.render view
         resp.on "error", (err) ->
-          if Array.isArray app.locals.flash["error"]
-            app.locals.flash["error"].push e.message
+          if Array.isArray res.locals.flash["error"]
+            res.locals.flash["error"].push e.message
           else
-            app.locals.flash["error"] = e.message
+            res.locals.flash["error"] = e.message
           res.render view
+    request.on "error", (e) ->
+      console.log "Error with request to access the Yelp Business API", e.message
+      if Array.isArray res.locals.flash["error"]
+        res.locals.flash["error"].push err.message
+      else
+        res.locals.flash["error"] = err.message
+    request.end()
 
   index: (req, res) ->
     { type, longitude, latitude, location } = req.query
@@ -54,7 +61,7 @@ module.exports = (User) ->
       path = "/v3/businesses/search?" + params.join("&")
       token = cache.get("yelp_token")
 
-      https.get
+      request = https.get
         host: url
         path: path
         headers:
@@ -78,20 +85,21 @@ module.exports = (User) ->
               if type == "json"
                 res.status(500).json e
               else
-                if Array.isArray app.locals.flash["error"]
-                  app.locals.flash["error"].push e.message
+                if Array.isArray res.locals.flash["error"]
+                  res.locals.flash["error"].push e.message
                 else
-                  app.locals.flash["error"] = e.message
+                  res.locals.flash["error"] = e.message
                 res.render view
-          resp.on "error", (err) ->
-            if type == "json"
-              res.status(500).json(err)
-            else
-              if Array.isArray app.locals.flash["error"]
-                app.locals.flash["error"].push e.message
-              else
-                app.locals.flash["error"] = e.message
-              res.render view
+      request.on "error", (err) ->
+        if type == "json"
+          res.status(500).json(err)
+        else
+          if Array.isArray res.locals.flash["error"]
+            res.locals.flash["error"].push err.message
+          else
+            res.locals.flash["error"] = err.message
+          res.render view
+      request.end()
     else
       if "json" == type
         res.json {}
@@ -107,7 +115,7 @@ module.exports = (User) ->
     url = "api.yelp.com"
     path = "/v3/autocomplete?" + params.join("&")
     token = cache.get("yelp_token")
-    https.get
+    request = https.get
       host: url
       path: path
       headers:
@@ -120,5 +128,9 @@ module.exports = (User) ->
           try
             parsedData = JSON.parse rawData
             res.json parsedData
+    request.on "error", (err) ->
+      console.log "Error with the request to access the Yelp Autocomplete API: ", err.message
+      res.status(500).json err
+    request.end()
 
     

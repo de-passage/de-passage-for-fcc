@@ -54,7 +54,7 @@
     venueList = new Vue({
       el: "#app-container",
       data: {
-        items: [],
+        items: null,
         coords: null
       },
       methods: {
@@ -68,7 +68,9 @@
             return $.ajax(window.autocompleteURL + ("?longitude=" + (encodeURIComponent(this.coords.lon)) + "&latitude=" + (encodeURIComponent(this.coords.lat)) + "&text='" + (encodeURIComponent(txt)) + "'"), {
               method: "GET",
               dataType: "json"
-            }).done(function(args) {}).fail(function() {
+            }).done(function(args) {
+              return console.log("response: ", JSON.stringify(args));
+            }).fail(function() {
               return console.log("failed");
             });
           }

@@ -17,7 +17,6 @@ module.exports = (User) ->
       path: path
       headers:
         "Authorization": "Bearer " + token
-      port: process.env.PORT
       (resp) ->
         rawData = ""
         resp.on "data", (chunk) -> rawData += chunk
@@ -66,7 +65,6 @@ module.exports = (User) ->
         path: path
         headers:
           "Authorization": "Bearer " + token
-        #port: process.env.PORT
         (resp) ->
           rawData = ""
           resp.on "data", (chunk) -> rawData += chunk
@@ -120,7 +118,6 @@ module.exports = (User) ->
       path: path
       headers:
         "Authorization": "Bearer " + token
-      #port: process.env.PORT
       (resp) ->
         rawData = ""
         resp.on "data", (chunk) -> rawData += chunk

@@ -81,6 +81,7 @@
               params.push(param + "=" + encodeURIComponent(req.query[param]));
             }
           }
+          params.push("categories=bars");
           url = "api.yelp.com";
           path = "/v3/businesses/search?" + params.join("&");
           token = cache.get("yelp_token");
@@ -92,6 +93,7 @@
             }
           }, function(resp) {
             var rawData;
+            console.log("responded");
             rawData = "";
             resp.on("data", function(chunk) {
               return rawData += chunk;
@@ -110,12 +112,15 @@
                   }
                   return results1;
                 })();
+                console.log(req.user);
                 return User.aggregateVisits(venues).then(function(results) {
                   var j, len1, ref2;
                   ref2 = parsedData.businesses;
                   for (j = 0, len1 = ref2.length; j < len1; j++) {
                     business = ref2[j];
+                    console.log(business);
                     business.going = results[business.id].length;
+                    business.user_going = (req.user != null) && (req.user.visit === business.id);
                   }
                   if (type === "json") {
                     return res.json(parsedData);
@@ -163,7 +168,6 @@
       },
       search: function(req, res) {
         var i, len, param, params, path, ref, request, token, url;
-        console.log("called");
         params = [];
         ref = ["longitude", "latitude", "text"];
         for (i = 0, len = ref.length; i < len; i++) {

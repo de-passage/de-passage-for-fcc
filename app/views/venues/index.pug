@@ -14,6 +14,8 @@ block content
                 input.form-control#search-bar(type="text", @input="autocomplete")
               .col-1
                 input.btn.btn-primary(type="submit", value="Search", @click="search")
+      .row(v-if="loading")
+        p Loading
       .row
         ul.list-group#venue-list(v-if=items, style="display: none")
           li.list-group-item(v-for="item in items") 
@@ -44,13 +46,17 @@ block content
                         li.badge.badge-info.mr-1(v-for="i in item.categories")
                           | {{ i.title }}
                       .row
-                        .col-6
+                        .col-4.pt-2
                           a(href="item.url", target="_blank") Yelp page
-                        .col-6.text-right
+                        .col-4
+                          if(user)
+                            button.btn(type="btn", v-bind:class="item.user_going ? 'btn-success' : 'btn-primary'", @click="toggleVisit(item)") {{ !item.user_going ? "I am going" : "Cancel my visit" }}
+
+                        .col-4.text-right
                           button.btn.btn-secondary.no-transition(type="button", @click="toggle(item)") Less
                             i.fa.fa-caret-up.ml-2(aria-hidden="true")
-      .row
-        p(v-if="Array.isArray(items) && items.length === 0") No results
+      .row(v-if="Array.isArray(items) && items.length === 0")
+        p No results
 
 
 
@@ -61,6 +67,8 @@ block scripts
     | window.yelpData = !{ yelpData ? JSON.stringify(yelpData) : "null"};
     | window.searchURL = !{ '"' + path.index_venues() + '?type=json"' };
     | window.autocompleteURL = !{ "'" + path.nightlife_autocomplete() + "'"};
+    | window.updateUrl = !{JSON.stringify(path.update_visits("ID", "self"))}
+    | window.destroyUrl = !{JSON.stringify(path.destroy_visits("ID", "self"))}
   script(src="/scripts/yelp.js")
 
 block styles

@@ -29,15 +29,33 @@ searchVenues = (coords, text) ->
       reject()
 
 
+ajaxTo = (url) ->
+  new Promise( (resolve, reject) ->
+    $.ajax url,
+      method: "POST"
+      success: resolve
+      error: reject
+  )
 
+alertError = (data) =>
+  alert "Error: #{data.responseJSON.error}"
+
+harmonizeResult = (results) ->
+  for result in results.businesses
+    result.user_going ?= false
+    result.shown = false
+  return results.businesses
 
 $ ->
   $("#venue-list").show()
   venueList = new Vue
     el: "#app-container"
     data:
+      loading: true
       items: null
       coords: null
+      update_url: window.updateUrl
+      destroy_url: window.destroyUrl
     methods:
       toggle: (e) -> e.shown = !e.shown
       autocomplete: ->
@@ -53,25 +71,36 @@ $ ->
       search: (event) ->
         event.preventDefault()
         text = $("#search-bar").val()
+        venueList.loading = true
+        venueList.items = null
         searchVenues(this.coords, text).then (results) ->
-          for result in results.businesses
-            result.shown = false
-          venueList.items = results.businesses
+          venueList.items = harmonizeResult results
+          venueList.loading = false
+
+      toggleVisit: (item) ->
+        url = if item.user_going then venueList.destroy_url else venueList.update_url
+        url = url.replace /ID/, item.id
+        ajaxTo(url).then (data) =>
+          item.going = data.visits.length
+          item.user_going = !item.user_going
+          for i in venueList.items
+            if i.id != item.id and i.user_going
+              i.user_going = false
+              i.going--
+        .catch alertError
           
 
   if window.yelpData
-    for d in window.yelpData.businesses
-      d.shown = false
-    venueList.items = window.yelpData.businesses
+    venueList.loading = false
+    venueList.items = harmonizeResult window.yelpData
 
   getCoordinates().then (coords) ->
     venueList.coords = coords
     if !window.yelpData
       searchVenues(coords).then (results) ->
-        for result in results.businesses
-          result.shown = false
-        venueList.items = results.businesses
-
+        venueList.items = harmonizeResult results
+        venueList.loading = false
+  window.vue = venueList
 
 
 

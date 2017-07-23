@@ -30,7 +30,6 @@
         "Content-Length": Buffer.byteLength(data)
       }
     }, function(res) {
-      console.log("Got response from Yelp server");
       res.setEncoding("utf-8");
       res.on("data", function(chunk) {
         var ret;
@@ -38,9 +37,7 @@
         console.log("Fetched new yelp authentication token. Expires in " + ret.expires_in + " seconds");
         return cache.put("yelp_token", ret.access_token, Math.min(ret.expires_in * 1000, 2147483647), authenticate);
       });
-      res.on("end", function() {
-        return console.log("Yelp auth end");
-      });
+      res.on("end", function() {});
       return res.on("error", function() {
         var data;
         data = 1 <= arguments.length ? slice.call(arguments, 0) : [];

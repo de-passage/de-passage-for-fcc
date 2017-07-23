@@ -24,6 +24,10 @@ authenticate = ->
         ret = JSON.parse chunk
         console.log "Fetched new yelp authentication token. Expires in #{ret.expires_in} seconds"
         cache.put("yelp_token", ret.access_token, Math.min(ret.expires_in * 1000, 2147483647), authenticate)
+      res.on "end", ->
+        console.log "Yelp auth end"
+      res.on "error", (data...) ->
+        console.log "Error getting yelp authentication token:", data...
 
   req.write data
   req.end()

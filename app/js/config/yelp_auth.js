@@ -25,12 +25,12 @@
       method: "POST",
       host: "api.yelp.com",
       path: "/oauth2/token",
-      port: process.env.PORT,
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
         "Content-Length": Buffer.byteLength(data)
       }
     }, function(res) {
+      console.log("Got response from Yelp server");
       res.setEncoding("utf-8");
       res.on("data", function(chunk) {
         var ret;

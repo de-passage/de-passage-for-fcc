@@ -155,6 +155,12 @@
       return r;
     };
 
+    Router.prototype.root = function() {
+      var alias, middlewares;
+      alias = arguments[0], middlewares = 2 <= arguments.length ? slice.call(arguments, 1) : [];
+      return this.addRoute.apply(this, [alias, "get", "/"].concat(slice.call(middlewares)));
+    };
+
     Router.adapt = function(endpoint, method, adapter) {
       var count, tokens;
       tokens = endpoint.split(/:[^\/]+/);

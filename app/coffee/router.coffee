@@ -101,6 +101,10 @@ module.exports =
       callback?(r)
       return r
 
+    # Alias for get(`alias`, "get", "/", `middlewares...`)
+    root: (alias, middlewares...) ->
+      @addRoute alias, "get", "/", middlewares...
+
 
     # Transform a route into a function adapting parameters into a path
     @adapt = (endpoint, method, adapter) ->

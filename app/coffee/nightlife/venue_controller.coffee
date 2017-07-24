@@ -68,17 +68,14 @@ module.exports = (User) ->
         headers:
           "Authorization": "Bearer " + token
         (resp) ->
-          console.log "responded"
           rawData = ""
           resp.on "data", (chunk) -> rawData += chunk
           resp.on "end", ->
             try
               parsedData = JSON.parse rawData
               venues = (business.id for business in parsedData.businesses)
-              console.log req.user
               User.aggregateVisits(venues).then((results) ->
                 for business in parsedData.businesses
-                  console.log business
                   business.going = results[business.id].length
                   business.user_going = req.user? and (req.user.visit == business.id)
                 if type == "json"

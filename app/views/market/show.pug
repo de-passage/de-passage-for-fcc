@@ -1,0 +1,12 @@
+extends ../layout.pug
+
+block title
+  | Stock market
+
+block content
+
+block scripts
+  script(src="/scripts/market.js", type="text/javascript")
+  script(type="text/javascript")
+    | window.wsPath = !{JSON.stringify(path.marketWS())};
+

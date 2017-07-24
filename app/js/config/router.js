@@ -5,7 +5,7 @@
   Router = require("../router.js");
 
   router = new Router(function(path, method) {
-    if (method !== "get" && method !== "post") {
+    if (method !== "get" && method !== "post" && method !== "ws") {
       path += "?_method=" + method.toUpperCase();
     }
     return path;

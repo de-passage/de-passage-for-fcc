@@ -20,6 +20,7 @@ db_connection (db) ->
   visits_controller = require("./nightlife/visit_controller.js")(User)
   voting = require("./voting-app/poll_controller.js")(Poll)
   voting_options = require("./voting-app/option_controller.js")(Poll)
+  market_controller = require "./market/market_controller.js"
 
   # ########
   # Routes #
@@ -52,11 +53,17 @@ db_connection (db) ->
   app.post "/voting-app/polls/vote", voting.vote
   app.post "/voting-app/polls/:name/options", authentication.isAuthenticated, voting_options.create
 
-  # Nightlife oordinator
+  # Nightlife coordinator
   router.scope "nightlife", (router) ->
     router.get "nightlife_autocomplete", "/search", venue_controller.search
     router.resource "venues", venue_controller, (router) ->
       router.resource "visits", visits_controller
+
+  # Market mapping
+  router.scope "market", (router) ->
+    router.get "market_root", "/", market_controller.show
+    router.addRoute "marketWS", "ws", "/ws", market_controller.webSocket
+
 
   # Authentication
   app.get "/login", (req, res) -> res.render "login.pug", redirect: req.query.redirect

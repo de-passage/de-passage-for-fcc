@@ -11,6 +11,7 @@ yelp = require "./yelp_auth.js"
 yelp()
 
 app = express()
+expressWs = require("express-ws")(app)
 
 secret = process.env.SECRET || "secret key here"
 

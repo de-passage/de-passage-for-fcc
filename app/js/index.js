@@ -17,7 +17,7 @@
   db_connection = require("./config/db.js");
 
   db_connection(function(db) {
-    var Poll, User, authentication, imgsrch, venue_controller, visits_controller, voting, voting_options;
+    var Poll, User, authentication, imgsrch, market_controller, venue_controller, visits_controller, voting, voting_options;
     authentication = require("./authentication.js")(db);
     imgsrch = require("./imgsrch/main.js")(db);
     Poll = require("./voting-app/poll.js")(db.collection("polls"), require("mongodb").ObjectId);
@@ -26,6 +26,7 @@
     visits_controller = require("./nightlife/visit_controller.js")(User);
     voting = require("./voting-app/poll_controller.js")(Poll);
     voting_options = require("./voting-app/option_controller.js")(Poll);
+    market_controller = require("./market/market_controller.js");
     app.get("/", function(req, res) {
       return res.render("index.pug");
     });
@@ -59,6 +60,10 @@
       return router.resource("venues", venue_controller, function(router) {
         return router.resource("visits", visits_controller);
       });
+    });
+    router.scope("market", function(router) {
+      router.get("market_root", "/", market_controller.show);
+      return router.addRoute("marketWS", "ws", "/ws", market_controller.webSocket);
     });
     app.get("/login", function(req, res) {
       return res.render("login.pug", {

@@ -28,6 +28,8 @@
 
   expressWs = require("express-ws")(app);
 
+  app.wss = expressWs.getWss();
+
   secret = process.env.SECRET || "secret key here";
 
   if (process.env.DEVELOPMENT_ENV) {

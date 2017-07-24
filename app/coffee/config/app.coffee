@@ -12,6 +12,7 @@ yelp()
 
 app = express()
 expressWs = require("express-ws")(app)
+app.wss = expressWs.getWss()
 
 secret = process.env.SECRET || "secret key here"
 

@@ -20,7 +20,7 @@ db_connection (db) ->
   visits_controller = require("./nightlife/visit_controller.js")(User)
   voting = require("./voting-app/poll_controller.js")(Poll)
   voting_options = require("./voting-app/option_controller.js")(Poll)
-  market_controller = require "./market/market_controller.js"
+  market_controller = require("./market/market_controller.js")(app.wss)
 
   # ########
   # Routes #

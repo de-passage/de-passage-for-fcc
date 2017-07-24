@@ -4,6 +4,10 @@ block title
   | Stock market
 
 block content
+  #display
+  form
+    input.form-control#msg(type="text")
+    button.btn.btn-primary#test-btn(type="button") Send
 
 block scripts
   script(src="/scripts/market.js", type="text/javascript")

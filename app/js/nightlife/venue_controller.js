@@ -93,7 +93,6 @@
             }
           }, function(resp) {
             var rawData;
-            console.log("responded");
             rawData = "";
             resp.on("data", function(chunk) {
               return rawData += chunk;
@@ -112,13 +111,11 @@
                   }
                   return results1;
                 })();
-                console.log(req.user);
                 return User.aggregateVisits(venues).then(function(results) {
                   var j, len1, ref2;
                   ref2 = parsedData.businesses;
                   for (j = 0, len1 = ref2.length; j < len1; j++) {
                     business = ref2[j];
-                    console.log(business);
                     business.going = results[business.id].length;
                     business.user_going = (req.user != null) && (req.user.visit === business.id);
                   }
